@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <!-- Prevents Search Engine Crawlers from Indexing -->
   <meta name="robots" content="noindex, nofollow" />
   
   <title>Road Trip</title>
 
-  <!-- Web App Manifest for True Standalone Fullscreen PWA -->
+  <!-- Web App Manifest for Native Standalone Fullscreen -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -35,10 +34,10 @@
       overflow: hidden;
     }
 
-    /* Dynamic Grid Layout to fill full Pixel screen */
+    /* Fixed Viewport Proportions: 24% Top Cards, 48% Map, 24% Bottom Cards */
     .dashboard {
       display: grid;
-      grid-template-rows: auto 1fr auto;
+      grid-template-rows: 24vh 48vh 24vh;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
       height: 100vh;
@@ -48,38 +47,39 @@
 
     .card {
       background-color: #1e1e1e;
-      border-radius: 14px;
-      padding: 14px 10px;
+      border-radius: 12px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       text-align: center;
       position: relative;
       overflow: hidden;
+      height: 100%;
     }
 
-    /* Map Box (Middle Row, Expands dynamically) */
+    /* Map Box Row */
     #map-card {
       grid-row: 2;
       grid-column: 1 / span 2;
       padding: 0;
-      border-radius: 14px;
+      border-radius: 12px;
       z-index: 1;
       display: block;
-      min-height: 280px;
+      height: 100%;
     }
 
     #map {
       width: 100%;
       height: 100%;
-      border-radius: 14px;
+      border-radius: 12px;
     }
 
     /* Directional Vehicle Arrow Styling */
     .vehicle-marker-container {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -92,13 +92,13 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      margin-bottom: 8px;
+      height: 18px;
     }
 
     .card-title {
-      font-size: 1.1rem;
+      font-size: 0.85rem;
       text-transform: uppercase;
-      letter-spacing: 1.8px;
+      letter-spacing: 1.2px;
       color: #ffffff;
       font-weight: 800;
       width: 100%;
@@ -111,23 +111,24 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      flex: 1;
       width: 100%;
     }
 
     .primary-value {
-      font-size: 2.1rem;
+      font-size: 1.4rem;
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.1;
       color: #ffffff;
     }
 
     .sub-value {
-      font-size: 1.25rem;
+      font-size: 0.95rem;
       color: #dddddd;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
-    /* FANCY COMPASS STYLING (Enlarged to 140px for Pixel 8 Pro) */
+    /* FANCY COMPASS STYLING */
     .compass-container {
       display: flex;
       flex-direction: column;
@@ -138,13 +139,13 @@
 
     .compass-wrapper {
       position: relative;
-      width: 140px;
-      height: 140px;
-      margin-top: 6px;
+      width: 110px;
+      height: 110px;
+      margin-top: 2px;
       border-radius: 50%;
       background: radial-gradient(circle, #2a2a2a 0%, #141414 100%);
-      border: 3px solid #444444;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 3px 8px rgba(0,0,0,0.6);
+      border: 2px solid #444444;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -170,12 +171,11 @@
 
     /* Weather Styling */
     .weather-location {
-      font-size: 1.1rem;
+      font-size: 0.85rem;
       color: #34c759;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 4px;
     }
 
     .weather-main {
@@ -189,26 +189,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-top: 4px;
-      font-size: 1.25rem;
+      gap: 4px;
+      font-size: 1rem;
       font-weight: 600;
     }
 
     .weather-details-line {
       display: flex;
       justify-content: center;
-      gap: 16px;
-      font-size: 1.15rem;
+      gap: 10px;
+      font-size: 0.85rem;
       color: #cccccc;
-      margin-top: 8px;
+      margin-top: 2px;
     }
 
     .weather-trend {
       display: flex;
       justify-content: center;
-      margin-top: 10px;
-      gap: 6px;
+      margin-top: 4px;
+      gap: 4px;
       width: 100%;
     }
 
@@ -216,19 +215,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 0.95rem;
+      font-size: 0.75rem;
       background: #2a2a2a;
-      padding: 6px 8px;
-      border-radius: 6px;
+      padding: 3px 4px;
+      border-radius: 4px;
       flex: 1;
       color: #ffffff;
     }
 
     .sunset-info {
-      font-size: 1.1rem;
+      font-size: 0.85rem;
       color: #ff9500;
       font-weight: 700;
-      margin-top: 10px;
+      margin-top: 4px;
     }
 
     /* Stats Layout for Bottom Right */
@@ -240,11 +239,11 @@
     }
 
     .speed-box {
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
 
     .speed-val-text {
-      font-size: 3.4rem !important; /* Huge Speed Reading */
+      font-size: 2.2rem !important;
       font-weight: 900;
       line-height: 1;
       color: #ffffff;
@@ -254,7 +253,7 @@
       display: flex;
       justify-content: space-around;
       width: 100%;
-      gap: 12px;
+      gap: 8px;
     }
 
     .stat-item {
@@ -266,14 +265,14 @@
     }
 
     .stat-label {
-      font-size: 1rem;
+      font-size: 0.75rem;
       color: #aaaaaa;
       text-transform: uppercase;
       font-weight: 800;
     }
 
     .stat-val {
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       font-weight: bold;
       color: #ffffff;
     }
@@ -283,13 +282,13 @@
       background: #333336;
       color: #ffffff;
       border: 1px solid #555;
-      border-radius: 6px;
-      padding: 8px 12px;
-      font-size: 0.85rem;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
       text-transform: uppercase;
       font-weight: 800;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 4px;
       transition: background 0.2s;
     }
 
@@ -312,7 +311,7 @@
         <div class="primary-value" id="street-name">Locating...</div>
         <div class="sub-value" id="city-state">--</div>
         <div class="sub-value" id="county-zip">--</div>
-        <div class="sub-value" style="color: #4cd964; font-weight: 700; margin-top: 6px;" id="elevation">Elevation: -- ft</div>
+        <div class="sub-value" style="color: #4cd964; font-weight: 700; margin-top: 2px;" id="elevation">Elevation: -- ft</div>
       </div>
     </div>
 
@@ -391,13 +390,13 @@
         <div class="stats-container">
           <div class="stat-item speed-box">
             <span class="stat-label">Speed</span>
-            <span class="stat-val speed-val-text" id="current-speed">0 <small style="font-size:1.2rem; font-weight: normal;">mph</small></span>
+            <span class="stat-val speed-val-text" id="current-speed">0 <small style="font-size:1rem; font-weight: normal;">mph</small></span>
           </div>
 
           <div class="stats-row">
             <div class="stat-item">
               <span class="stat-label">Distance</span>
-              <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.9rem">mi</small></span>
+              <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.75rem">mi</small></span>
               <button class="btn-reset" onclick="resetDistance()">Reset Dist</button>
             </div>
             <div class="stat-item">
@@ -439,7 +438,7 @@
 
     function resetDistance() {
       totalDistance = 0;
-      document.getElementById('trip-distance').innerHTML = `0.0 <small style="font-size:0.9rem">mi</small>`;
+      document.getElementById('trip-distance').innerHTML = `0.0 <small style="font-size:0.75rem">mi</small>`;
     }
 
     function resetTimer() {
@@ -466,12 +465,12 @@
 
     function getWeatherInfo(code) {
       const icons = {
-        sun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-        cloudSun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
-        cloud: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
-        rain: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
-        thunder: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-        snow: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
+        sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        cloudSun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
+        cloud: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
+        rain: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
+        thunder: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+        snow: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
       };
 
       const weatherMap = {
@@ -491,7 +490,7 @@
       return weatherMap[code] || { text: "Fair", icon: icons.cloudSun };
     }
 
-    // Initialize Leaflet Map - Set Zoom to 19 for maximum close-up street detail
+    // Initialize Leaflet Map
     function initMap() {
       map = L.map('map', { zoomControl: false }).setView([42.3765, -71.2356], 19);
       
@@ -509,8 +508,8 @@
             </svg>
           </div>
         `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
+        iconSize: [36, 36],
+        iconAnchor: [18, 18]
       });
 
       marker = L.marker([42.3765, -71.2356], { icon: locationIcon }).addTo(map);
@@ -685,14 +684,14 @@
 
             if (speed !== null && !isNaN(speed)) {
               const mph = Math.round(speed * 2.23694);
-              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:1.2rem; font-weight: normal;">mph</small>`;
+              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:1rem; font-weight: normal;">mph</small>`;
             }
 
             if (lastLat !== null && lastLon !== null) {
               const distStep = calculateDistance(lastLat, lastLon, latitude, longitude);
               if (distStep > 0.005) {
                 totalDistance += distStep;
-                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.9rem">mi</small>`;
+                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.75rem">mi</small>`;
               }
             }
 
