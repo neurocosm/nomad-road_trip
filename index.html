@@ -693,6 +693,17 @@
       });
     }
 
+    // Tap Screen Anywhere to Request Native Fullscreen
+    document.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        }
+      }
+    });
+
     window.onload = () => {
       initMap();
       startTracking();
