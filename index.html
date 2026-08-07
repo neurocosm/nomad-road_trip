@@ -34,10 +34,10 @@
       overflow: hidden;
     }
 
-    /* Fixed Viewport Proportions: 24% Top Cards, 48% Map, 24% Bottom Cards */
+    /* Fixed Viewport Proportions: 25% Top Cards, 46% Map, 27% Bottom Cards */
     .dashboard {
       display: grid;
-      grid-template-rows: 24vh 48vh 24vh;
+      grid-template-rows: 25vh 46vh 27vh;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
       height: 100vh;
@@ -48,10 +48,10 @@
     .card {
       background-color: #1e1e1e;
       border-radius: 12px;
-      padding: 8px;
+      padding: 6px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       text-align: center;
       position: relative;
@@ -86,66 +86,49 @@
       transition: transform 0.2s ease-out;
     }
 
-    /* Uniform Header Alignment */
-    .card-title-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 18px;
-    }
-
-    .card-title {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: #ffffff;
-      font-weight: 800;
-      width: 100%;
-      text-align: center;
-      line-height: 1;
-    }
-
     .card-content-body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex: 1;
+      height: 100%;
       width: 100%;
     }
 
+    /* Primary Data Metrics (Location, Bearing, Temperature) - Normal Weight */
     .primary-value {
-      font-size: 1.4rem;
-      font-weight: 800;
+      font-size: 2.2rem;
+      font-weight: normal;
       line-height: 1.1;
       color: #ffffff;
     }
 
     .sub-value {
-      font-size: 0.95rem;
+      font-size: 1.15rem;
       color: #dddddd;
+      font-weight: normal;
       margin-top: 2px;
     }
 
-    /* FANCY COMPASS STYLING */
+    /* COMPASS STYLING */
     .compass-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       width: 100%;
+      height: 100%;
     }
 
     .compass-wrapper {
       position: relative;
-      width: 110px;
-      height: 110px;
+      width: 160px;
+      height: 160px;
       margin-top: 2px;
       border-radius: 50%;
       background: radial-gradient(circle, #2a2a2a 0%, #141414 100%);
-      border: 2px solid #444444;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
+      border: 3px solid #444444;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -169,11 +152,11 @@
       transform-origin: center center;
     }
 
-    /* Weather Styling */
+    /* Weather Styling - Normal Weight */
     .weather-location {
-      font-size: 0.85rem;
+      font-size: 1rem;
       color: #34c759;
-      font-weight: 800;
+      font-weight: normal;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -189,16 +172,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      font-size: 1rem;
-      font-weight: 600;
+      gap: 6px;
+      font-size: 1.2rem;
+      font-weight: normal;
     }
 
     .weather-details-line {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      font-size: 0.85rem;
+      gap: 12px;
+      font-size: 1rem;
       color: #cccccc;
       margin-top: 2px;
     }
@@ -215,36 +198,39 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       background: #2a2a2a;
-      padding: 3px 4px;
+      padding: 4px 4px;
       border-radius: 4px;
       flex: 1;
       color: #ffffff;
+      font-weight: normal;
     }
 
     .sunset-info {
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       color: #ff9500;
-      font-weight: 700;
+      font-weight: normal;
       margin-top: 4px;
     }
 
-    /* Stats Layout for Bottom Right */
+    /* Stats Layout for Bottom Right - Normal Weight */
     .stats-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-around;
       width: 100%;
+      height: 100%;
     }
 
     .speed-box {
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .speed-val-text {
-      font-size: 2.2rem !important;
-      font-weight: 900;
+      font-size: 3.8rem !important;
+      font-weight: normal;
       line-height: 1;
       color: #ffffff;
     }
@@ -265,28 +251,28 @@
     }
 
     .stat-label {
-      font-size: 0.75rem;
-      color: #aaaaaa;
+      font-size: 0.8rem;
+      color: #888888;
       text-transform: uppercase;
-      font-weight: 800;
+      font-weight: normal;
     }
 
     .stat-val {
-      font-size: 1.15rem;
-      font-weight: bold;
+      font-size: 1.4rem;
+      font-weight: normal;
       color: #ffffff;
     }
 
-    /* Reset Buttons Styling */
+    /* Reset Buttons Styling - Unbolded for smaller, compact footprint */
     .btn-reset {
       background: #333336;
       color: #ffffff;
       border: 1px solid #555;
       border-radius: 4px;
-      padding: 4px 8px;
+      padding: 3px 6px;
       font-size: 0.7rem;
       text-transform: uppercase;
-      font-weight: 800;
+      font-weight: normal;
       cursor: pointer;
       margin-top: 4px;
       transition: background 0.2s;
@@ -304,40 +290,32 @@
   <div class="dashboard">
     <!-- Top-Left: Location & Elevation -->
     <div class="card" id="location-card">
-      <div class="card-title-container">
-        <span class="card-title">Location Info</span>
-      </div>
       <div class="card-content-body">
         <div class="primary-value" id="street-name">Locating...</div>
         <div class="sub-value" id="city-state">--</div>
         <div class="sub-value" id="county-zip">--</div>
-        <div class="sub-value" style="color: #4cd964; font-weight: 700; margin-top: 2px;" id="elevation">Elevation: -- ft</div>
+        <div class="sub-value" style="color: #4cd964; font-weight: normal; margin-top: 4px;" id="elevation">Elevation: -- ft</div>
       </div>
     </div>
 
     <!-- Top-Right: Compass & Bearing -->
     <div class="card" id="compass-card">
-      <div class="card-title-container">
-        <span class="card-title">COMPASS</span>
-      </div>
       <div class="card-content-body">
         <div class="compass-container">
           <div class="primary-value" id="heading-text">0° N</div>
           <div class="compass-wrapper">
-            <!-- Compass Dial Background -->
             <svg class="compass-rose-svg" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="46" fill="none" stroke="#555" stroke-width="1.5" />
-              <text x="50" y="15" fill="#ff3b30" font-size="9" font-weight="bold" text-anchor="middle">N</text>
-              <text x="87" y="53" fill="#aaa" font-size="8" font-weight="bold" text-anchor="middle">E</text>
-              <text x="50" y="91" fill="#aaa" font-size="8" font-weight="bold" text-anchor="middle">S</text>
-              <text x="13" y="53" fill="#aaa" font-size="8" font-weight="bold" text-anchor="middle">W</text>
+              <text x="50" y="15" fill="#ff3b30" font-size="9" font-weight="normal" text-anchor="middle">N</text>
+              <text x="87" y="53" fill="#aaa" font-size="8" font-weight="normal" text-anchor="middle">E</text>
+              <text x="50" y="91" fill="#aaa" font-size="8" font-weight="normal" text-anchor="middle">S</text>
+              <text x="13" y="53" fill="#aaa" font-size="8" font-weight="normal" text-anchor="middle">W</text>
               <line x1="50" y1="5" x2="50" y2="8" stroke="#aaa" stroke-width="1" />
               <line x1="95" y1="50" x2="92" y2="50" stroke="#aaa" stroke-width="1" />
               <line x1="50" y1="95" x2="50" y2="92" stroke="#aaa" stroke-width="1" />
               <line x1="5" y1="50" x2="8" y2="50" stroke="#aaa" stroke-width="1" />
             </svg>
 
-            <!-- Rotating Needle Layer -->
             <svg class="compass-needle-svg" id="needle-svg" viewBox="0 0 100 100">
               <polygon points="50,16 45,50 50,47" fill="#ff3b30" />
               <polygon points="50,16 55,50 50,47" fill="#e02b20" />
@@ -357,20 +335,17 @@
 
     <!-- Bottom-Left: Weather & Trend -->
     <div class="card" id="weather-card">
-      <div class="card-title-container">
-        <span class="card-title">Weather</span>
-      </div>
       <div class="card-content-body">
         <div class="weather-location" id="weather-city-state">--</div>
         <div class="weather-main">
           <div>
-            <div class="primary-value" id="current-temp">--°F</div>
+            <div class="primary-value" id="current-temp" style="font-size: 2.6rem;">--°F</div>
             <div class="sub-value" id="weather-desc">Fetching weather...</div>
           </div>
         </div>
         <div class="weather-details-line" id="weather-extra">
-          <span>Hum: <strong style="color: #ffffff;" id="humidity-val">--%</strong></span>
-          <span>UV: <strong style="color: #ffffff;" id="uv-val">--</strong></span>
+          <span>Hum: <strong style="color: #ffffff; font-weight: normal;" id="humidity-val">--%</strong></span>
+          <span>UV: <strong style="color: #ffffff; font-weight: normal;" id="uv-val">--</strong></span>
         </div>
         <div class="weather-trend" id="forecast-trend">
           <!-- Dynamic trend pills load here -->
@@ -383,20 +358,17 @@
 
     <!-- Bottom-Right: Trip Stats -->
     <div class="card" id="trip-card">
-      <div class="card-title-container">
-        <span class="card-title">Road Trip Stats</span>
-      </div>
       <div class="card-content-body">
         <div class="stats-container">
           <div class="stat-item speed-box">
-            <span class="stat-label">Speed</span>
-            <span class="stat-val speed-val-text" id="current-speed">0 <small style="font-size:1rem; font-weight: normal;">mph</small></span>
+            <span class="stat-label">SPEED</span>
+            <span class="stat-val speed-val-text" id="current-speed">0 <small style="font-size:1.2rem; font-weight: normal;">mph</small></span>
           </div>
 
           <div class="stats-row">
             <div class="stat-item">
               <span class="stat-label">Distance</span>
-              <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.75rem">mi</small></span>
+              <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.8rem; font-weight: normal;">mi</small></span>
               <button class="btn-reset" onclick="resetDistance()">Reset Dist</button>
             </div>
             <div class="stat-item">
@@ -438,7 +410,7 @@
 
     function resetDistance() {
       totalDistance = 0;
-      document.getElementById('trip-distance').innerHTML = `0.0 <small style="font-size:0.75rem">mi</small>`;
+      document.getElementById('trip-distance').innerHTML = `0.0 <small style="font-size:0.8rem; font-weight: normal;">mi</small>`;
     }
 
     function resetTimer() {
@@ -465,12 +437,12 @@
 
     function getWeatherInfo(code) {
       const icons = {
-        sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-        cloudSun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
-        cloud: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
-        rain: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
-        thunder: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-        snow: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
+        sun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        cloudSun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
+        cloud: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
+        rain: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
+        thunder: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+        snow: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
       };
 
       const weatherMap = {
@@ -490,7 +462,6 @@
       return weatherMap[code] || { text: "Fair", icon: icons.cloudSun };
     }
 
-    // Initialize Leaflet Map
     function initMap() {
       map = L.map('map', { zoomControl: false }).setView([42.3765, -71.2356], 19);
       
@@ -599,7 +570,7 @@
             else if (uv >= 6 && uv < 8) uvColor = '#ff9500';
             else if (uv >= 8) uvColor = '#ff3b30';
 
-            document.getElementById('uv-val').innerHTML = `<span style="color: ${uvColor};">${uv}</span>`;
+            document.getElementById('uv-val').innerHTML = `<span style="color: ${uvColor}; font-weight: normal;">${uv}</span>`;
           }
         }
 
@@ -614,7 +585,7 @@
               const temp = Math.round(data.hourly.temperature_2m[targetIndex]);
               const stepEl = document.createElement('div');
               stepEl.className = 'trend-step';
-              stepEl.innerHTML = `<span>+${i*2}h</span><strong>${temp}°</strong>`;
+              stepEl.innerHTML = `<span>+${i*2}h</span><span style="font-weight: normal;">${temp}°</span>`;
               trendContainer.appendChild(stepEl);
             }
           }
@@ -684,14 +655,14 @@
 
             if (speed !== null && !isNaN(speed)) {
               const mph = Math.round(speed * 2.23694);
-              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:1rem; font-weight: normal;">mph</small>`;
+              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:1.2rem; font-weight: normal;">mph</small>`;
             }
 
             if (lastLat !== null && lastLon !== null) {
               const distStep = calculateDistance(lastLat, lastLon, latitude, longitude);
               if (distStep > 0.005) {
                 totalDistance += distStep;
-                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.75rem">mi</small>`;
+                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.8rem; font-weight: normal;">mi</small>`;
               }
             }
 
