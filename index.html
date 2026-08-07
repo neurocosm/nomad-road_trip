@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Nomad Road Trip Companion</title>
+  <!-- Prevents Search Engine Crawlers from Indexing -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Road Trip</title>
   
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -39,12 +41,12 @@
     .card {
       background-color: #1e1e1e;
       border-radius: 8px;
-      padding: 10px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Center vertically */
-      align-items: center;     /* Center horizontally */
-      text-align: center;      /* Center text */
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
       position: relative;
       overflow: hidden;
     }
@@ -56,7 +58,7 @@
       padding: 0;
       border-radius: 8px;
       z-index: 1;
-      display: block; /* Override flex layout for Leaflet canvas */
+      display: block;
     }
 
     #map {
@@ -65,29 +67,59 @@
       border-radius: 8px;
     }
 
-    /* Typography & Utilities */
+    /* Directional Vehicle Arrow Styling */
+    .vehicle-marker-container {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease-out;
+    }
+
+    /* Uniform Header Alignment */
+    .card-title-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 22px;
+      margin-bottom: 2px;
+    }
+
     .card-title {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #a0a0a0;
-      margin-bottom: 4px;
+      font-weight: 700;
+      width: 100%;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .card-content-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
       width: 100%;
     }
 
     .primary-value {
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       font-weight: 700;
       line-height: 1.2;
     }
 
     .sub-value {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #cccccc;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
-    /* Compass Styling */
+    /* FANCY COMPASS STYLING (Expanded to 100px) */
     .compass-container {
       display: flex;
       flex-direction: column;
@@ -96,30 +128,41 @@
       width: 100%;
     }
 
-    .compass-dial {
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
-      border: 2px solid #444;
+    .compass-wrapper {
       position: relative;
+      width: 100px; /* Increased to fill card space nicely */
+      height: 100px;
+      margin-top: 2px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2a2a2a 0%, #141414 100%);
+      border: 2px solid #3a3a3a;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 4px;
     }
 
-    .compass-needle {
-      width: 4px;
-      height: 55px;
-      background: linear-gradient(to bottom, #ff3b30 50%, #ffffff 50%);
+    .compass-rose-svg {
+      width: 100%;
+      height: 100%;
       position: absolute;
-      transition: transform 0.3s ease;
+      top: 0;
+      left: 0;
+    }
+
+    .compass-needle-svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
       transform-origin: center center;
     }
 
     /* Weather Styling */
     .weather-location {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       color: #34c759;
       font-weight: 600;
       text-transform: uppercase;
@@ -138,23 +181,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-top: 2px;
+      gap: 4px;
+      margin-top: 1px;
     }
 
     .weather-details-line {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      font-size: 0.75rem;
+      gap: 10px;
+      font-size: 0.7rem;
       color: #aaaaaa;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     .weather-trend {
       display: flex;
       justify-content: center;
-      margin-top: 6px;
+      margin-top: 4px;
       gap: 4px;
       width: 100%;
     }
@@ -163,39 +206,83 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       background: #2a2a2a;
-      padding: 3px 6px;
+      padding: 2px 4px;
       border-radius: 4px;
       flex: 1;
     }
 
-    /* Stats Grid for Bottom Right */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      width: 100%;
+    .sunset-info {
+      font-size: 0.65rem;
+      color: #ff9500;
+      margin-top: 8px;
+    }
+
+    /* Stats Layout for Bottom Right */
+    .stats-container {
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      margin-top: 4px;
+      width: 100%;
     }
 
     .stat-item {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      flex: 1;
     }
 
     .stat-label {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: #888;
       text-transform: uppercase;
     }
 
     .stat-val {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       font-weight: bold;
+    }
+
+    /* Raised & Larger Speed Indicator (Placed AFTER .stat-val to take precedence) */
+    .speed-box {
+      margin-bottom: 8px;
+    }
+
+    .speed-val-text {
+      font-size: 1.8rem !important; /* Forces large speed display */
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      gap: 8px;
+    }
+
+    /* Reset Buttons Styling */
+    .btn-reset {
+      background: #2c2c2e;
+      color: #a0a0a0;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-reset:active {
+      background: #ff3b30;
+      color: #ffffff;
+      border-color: #ff3b30;
     }
   </style>
 </head>
@@ -204,22 +291,52 @@
   <div class="dashboard">
     <!-- Top-Left: Location & Elevation -->
     <div class="card" id="location-card">
-      <div class="card-title">Location Info</div>
-      <div>
+      <div class="card-title-container">
+        <span class="card-title">Location Info</span>
+      </div>
+      <div class="card-content-body">
         <div class="primary-value" id="street-name">Locating...</div>
         <div class="sub-value" id="city-state">--</div>
         <div class="sub-value" id="county-zip">--</div>
+        <div class="sub-value" style="color: #4cd964; font-weight: 600; margin-top: 2px;" id="elevation">Elevation: -- ft</div>
       </div>
-      <div class="sub-value" style="color: #4cd964; font-weight: 600; margin-top: 4px;" id="elevation">Elevation: -- ft</div>
     </div>
 
     <!-- Top-Right: Compass & Bearing -->
     <div class="card" id="compass-card">
-      <div class="card-title">COMPASS</div>
-      <div class="compass-container">
-        <div class="primary-value" id="heading-text">--° N</div>
-        <div class="compass-dial">
-          <div class="compass-needle" id="needle"></div>
+      <div class="card-title-container">
+        <span class="card-title">COMPASS</span>
+      </div>
+      <div class="card-content-body">
+        <div class="compass-container">
+          <div class="primary-value" id="heading-text">0° N</div>
+          <div class="compass-wrapper">
+            <!-- Compass Dial Background -->
+            <svg class="compass-rose-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="46" fill="none" stroke="#444" stroke-width="1.5" />
+              <text x="50" y="15" fill="#ff3b30" font-size="9" font-weight="bold" text-anchor="middle">N</text>
+              <text x="87" y="53" fill="#888" font-size="8" font-weight="bold" text-anchor="middle">E</text>
+              <text x="50" y="91" fill="#888" font-size="8" font-weight="bold" text-anchor="middle">S</text>
+              <text x="13" y="53" fill="#888" font-size="8" font-weight="bold" text-anchor="middle">W</text>
+              <line x1="50" y1="5" x2="50" y2="8" stroke="#888" stroke-width="1" />
+              <line x1="95" y1="50" x2="92" y2="50" stroke="#888" stroke-width="1" />
+              <line x1="50" y1="95" x2="50" y2="92" stroke="#888" stroke-width="1" />
+              <line x1="5" y1="50" x2="8" y2="50" stroke="#888" stroke-width="1" />
+              <line x1="81.8" y1="18.2" x2="79.7" y2="20.3" stroke="#555" stroke-width="1" />
+              <line x1="81.8" y1="81.8" x2="79.7" y2="79.7" stroke="#555" stroke-width="1" />
+              <line x1="18.2" y1="81.8" x2="20.3" y2="79.7" stroke="#555" stroke-width="1" />
+              <line x1="18.2" y1="18.2" x2="20.3" y2="20.3" stroke="#555" stroke-width="1" />
+            </svg>
+
+            <!-- Rotating Needle Layer -->
+            <svg class="compass-needle-svg" id="needle-svg" viewBox="0 0 100 100">
+              <polygon points="50,16 45,50 50,47" fill="#ff3b30" />
+              <polygon points="50,16 55,50 50,47" fill="#e02b20" />
+              <polygon points="50,84 45,50 50,53" fill="#cccccc" />
+              <polygon points="50,84 55,50 50,53" fill="#aaaaaa" />
+              <circle cx="50" cy="50" r="4" fill="#ffffff" stroke="#333333" stroke-width="1.5" />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -229,10 +346,12 @@
       <div id="map"></div>
     </div>
 
-    <!-- Bottom-Left: Weather & 6-Hour Trend -->
+    <!-- Bottom-Left: Weather & 6-Hour Trend + Sunset -->
     <div class="card" id="weather-card">
-      <div class="card-title">Weather</div>
-      <div>
+      <div class="card-title-container">
+        <span class="card-title">Weather</span>
+      </div>
+      <div class="card-content-body">
         <div class="weather-location" id="weather-city-state">--</div>
         <div class="weather-main">
           <div>
@@ -244,31 +363,41 @@
           <span>Hum: <strong style="color: #ffffff;" id="humidity-val">--%</strong></span>
           <span>UV: <strong style="color: #ffffff;" id="uv-val">--</strong></span>
         </div>
-      </div>
-      <div class="weather-trend" id="forecast-trend">
-        <!-- Dynamic trend pills load here -->
+        <div class="weather-trend" id="forecast-trend">
+          <!-- Dynamic trend pills load here -->
+        </div>
+        <div class="sunset-info">
+          Sunset In: <span id="sunset-time">--:--</span>
+        </div>
       </div>
     </div>
 
-    <!-- Bottom-Right: Trip Stats & Sunset Countdown -->
+    <!-- Bottom-Right: Trip Stats -->
     <div class="card" id="trip-card">
-      <div class="card-title">Trip Stats</div>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <span class="stat-label">Speed</span>
-          <span class="stat-val" id="current-speed">0 <small style="font-size:0.6rem">mph</small></span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Distance</span>
-          <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.6rem">mi</small></span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Elapsed</span>
-          <span class="stat-val" id="trip-time">00:00</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Sunset In</span>
-          <span class="stat-val" id="sunset-time" style="color: #ff9500;">--:--</span>
+      <div class="card-title-container">
+        <span class="card-title">Road Trip Stats</span>
+      </div>
+      <div class="card-content-body">
+        <div class="stats-container">
+          <!-- Speed Box with Guaranteed Font Size Override -->
+          <div class="stat-item speed-box">
+            <span class="stat-label">Speed</span>
+            <span class="stat-val speed-val-text" id="current-speed">0 <small style="font-size:0.75rem; font-weight: normal;">mph</small></span>
+          </div>
+
+          <!-- Side-by-Side Distance & Elapsed Time -->
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-label">Distance</span>
+              <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.55rem">mi</small></span>
+              <button class="btn-reset" onclick="resetDistance()">Reset Dist</button>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Elapsed</span>
+              <span class="stat-val" id="trip-time">00:00</span>
+              <button class="btn-reset" onclick="resetTimer()">Reset Time</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -285,6 +414,7 @@
     let startTime = new Date();
     let lastWeatherFetchTime = 0;
     let lastGeocodeTime = 0;
+    let wakeLock = null;
 
     // US State Name to 2-Letter Abbreviation Map
     const stateAbbreviations = {
@@ -300,6 +430,36 @@
       "Virginia": "VA", "Washington": "WA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"
     };
 
+    // Reset Distance Action
+    function resetDistance() {
+      totalDistance = 0;
+      document.getElementById('trip-distance').innerHTML = `0.0 <small style="font-size:0.55rem">mi</small>`;
+    }
+
+    // Reset Elapsed Time Action
+    function resetTimer() {
+      startTime = new Date();
+      document.getElementById('trip-time').innerText = "00:00";
+    }
+
+    // Keep Screen Awake
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Screen Wake Lock active');
+        }
+      } catch (err) {
+        console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+      }
+    }
+
+    document.addEventListener('visibilitychange', async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    });
+
     // SVG Icons for Weather
     function getWeatherInfo(code) {
       const icons = {
@@ -308,7 +468,7 @@
         cloud: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
         rain: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
         thunder: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-        snow: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="12" y1="18" x2="12.01" y2="18"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
+        snow: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
       };
 
       const weatherMap = {
@@ -338,10 +498,16 @@
       }).addTo(map);
 
       const locationIcon = L.divIcon({
-        className: 'custom-location-icon',
-        html: '<div style="background-color: #007aff; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>',
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
+        className: 'vehicle-marker-wrapper',
+        html: `
+          <div class="vehicle-marker-container" id="map-vehicle-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));">
+              <polygon points="12 2 19 21 12 17 5 21 12 2"/>
+            </svg>
+          </div>
+        `,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
       });
 
       marker = L.marker([42.3765, -71.2356], { icon: locationIcon }).addTo(map);
@@ -353,7 +519,7 @@
       return directions[Math.round(angle / 45) % 8];
     }
 
-    // Distance Calculation (Haversine formula in Miles)
+    // Distance Calculation
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 3958.8;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -366,10 +532,10 @@
       return R * c;
     }
 
-    // Fetch Reverse Geocode (Nominatim)
+    // Fetch Reverse Geocode
     async function fetchLocationDetails(lat, lon) {
       const now = Date.now();
-      if (now - lastGeocodeTime < 15000) return; // Throttle 15s
+      if (now - lastGeocodeTime < 15000) return;
       lastGeocodeTime = now;
 
       try {
@@ -384,14 +550,12 @@
           const county = addr.county || "";
           const postcode = addr.postcode || "";
 
-          // Convert state to 2-letter code if available
           const stateCode = stateAbbreviations[stateFull] || stateFull;
 
           document.getElementById('street-name').innerText = road;
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
 
-          // Sync concise City, ST to Weather Card header
           if (city && stateCode) {
             document.getElementById('weather-city-state').innerText = `${city}, ${stateCode}`;
           }
@@ -401,10 +565,10 @@
       }
     }
 
-    // Fetch Weather, Humidity, UV & Elevation (Open-Meteo)
+    // Fetch Weather & Elevation
     async function fetchWeatherAndElevation(lat, lon) {
       const now = Date.now();
-      if (now - lastWeatherFetchTime < 600000 && lastWeatherFetchTime !== 0) return; // 10 min throttle
+      if (now - lastWeatherFetchTime < 600000 && lastWeatherFetchTime !== 0) return;
       lastWeatherFetchTime = now;
 
       try {
@@ -412,13 +576,11 @@
         const response = await fetch(url);
         const data = await response.json();
 
-        // Elevation
         if (data.elevation !== undefined) {
           const feet = Math.round(data.elevation * 3.28084);
           document.getElementById('elevation').innerText = `Elevation: ${feet.toLocaleString()} ft`;
         }
 
-        // Current Weather + Icon + Humidity + UV
         if (data.current) {
           const info = getWeatherInfo(data.current.weather_code);
           document.getElementById('current-temp').innerText = `${Math.round(data.current.temperature_2m)}°F`;
@@ -428,24 +590,21 @@
             </div>
           `;
 
-          // Humidity
           if (data.current.relative_humidity_2m !== undefined) {
             document.getElementById('humidity-val').innerText = `${Math.round(data.current.relative_humidity_2m)}%`;
           }
 
-          // UV Index
           if (data.current.uv_index !== undefined) {
             const uv = data.current.uv_index.toFixed(1);
-            let uvColor = '#4cd964'; // Low
-            if (uv >= 3 && uv < 6) uvColor = '#ffcc00'; // Moderate
-            else if (uv >= 6 && uv < 8) uvColor = '#ff9500'; // High
-            else if (uv >= 8) uvColor = '#ff3b30'; // Very High / Extreme
+            let uvColor = '#4cd964';
+            if (uv >= 3 && uv < 6) uvColor = '#ffcc00';
+            else if (uv >= 6 && uv < 8) uvColor = '#ff9500';
+            else if (uv >= 8) uvColor = '#ff3b30';
 
             document.getElementById('uv-val').innerHTML = `<span style="color: ${uvColor};">${uv}</span>`;
           }
         }
 
-        // 6-Hour Trend
         if (data.hourly && data.hourly.temperature_2m) {
           const trendContainer = document.getElementById('forecast-trend');
           trendContainer.innerHTML = '';
@@ -463,7 +622,6 @@
           }
         }
 
-        // Sunset Countdown
         if (data.daily && data.daily.sunset && data.daily.sunset[0]) {
           updateSunsetCountdown(data.daily.sunset[0]);
         }
@@ -499,6 +657,24 @@
       document.getElementById('trip-time').innerText = formatted;
     }, 10000);
 
+    // Update Heading Function
+    function updateHeading(heading) {
+      if (heading !== null && !isNaN(heading)) {
+        const cardinal = getCardinalDirection(heading);
+        document.getElementById('heading-text').innerText = `${Math.round(heading)}° ${cardinal}`;
+        
+        const needleEl = document.getElementById('needle-svg');
+        if (needleEl) {
+          needleEl.style.transform = `rotate(${heading}deg)`;
+        }
+
+        const vehicleEl = document.getElementById('map-vehicle-icon');
+        if (vehicleEl) {
+          vehicleEl.style.transform = `rotate(${heading}deg)`;
+        }
+      }
+    }
+
     // Live Geolocation Tracking
     function startTracking() {
       if ("geolocation" in navigator) {
@@ -506,37 +682,28 @@
           (position) => {
             const { latitude, longitude, heading, speed } = position.coords;
 
-            // Update Map
             const newPos = [latitude, longitude];
             marker.setLatLng(newPos);
             map.panTo(newPos);
 
-            // Heading Vector
-            if (heading !== null && !isNaN(heading)) {
-              const cardinal = getCardinalDirection(heading);
-              document.getElementById('heading-text').innerText = `${Math.round(heading)}° ${cardinal}`;
-              document.getElementById('needle').style.transform = `rotate(${heading}deg)`;
-            }
+            updateHeading(heading);
 
-            // Speed
             if (speed !== null && !isNaN(speed)) {
               const mph = Math.round(speed * 2.23694);
-              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:0.6rem">mph</small>`;
+              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:0.75rem; font-weight: normal;">mph</small>`;
             }
 
-            // Odometer Calculation
             if (lastLat !== null && lastLon !== null) {
               const distStep = calculateDistance(lastLat, lastLon, latitude, longitude);
-              if (distStep > 0.005) { // Threshold to prevent drift
+              if (distStep > 0.005) {
                 totalDistance += distStep;
-                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.6rem">mi</small>`;
+                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.55rem">mi</small>`;
               }
             }
 
             lastLat = latitude;
             lastLon = longitude;
 
-            // API Calls
             fetchLocationDetails(latitude, longitude);
             fetchWeatherAndElevation(latitude, longitude);
           },
@@ -557,9 +724,7 @@
     if (window.DeviceOrientationEvent) {
       window.addEventListener('deviceorientation', (event) => {
         if (event.webkitCompassHeading) {
-          const heading = event.webkitCompassHeading;
-          document.getElementById('heading-text').innerText = `${Math.round(heading)}° ${getCardinalDirection(heading)}`;
-          document.getElementById('needle').style.transform = `rotate(${heading}deg)`;
+          updateHeading(event.webkitCompassHeading);
         }
       });
     }
@@ -567,6 +732,7 @@
     window.onload = () => {
       initMap();
       startTracking();
+      requestWakeLock();
     };
   </script>
 </body>
