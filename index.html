@@ -164,7 +164,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.3s ease-out;
     }
 
     .card-content-body {
@@ -178,21 +177,22 @@
 
     /* Location Top Card Sizing Adjustments */
     .street-value {
-      font-size: 1.8rem;
+      font-size: 1.75rem;
       font-weight: normal;
       line-height: 1.15;
       color: #ffffff;
+      margin-top: 2px;
     }
 
     .sub-value-large {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       color: #dddddd;
       font-weight: normal;
       margin-top: 2px;
     }
 
     .sub-value-meta {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: normal;
       margin-top: 2px;
     }
@@ -209,6 +209,22 @@
       letter-spacing: 0.5px;
       white-space: nowrap;
       text-align: center;
+    }
+
+    /* Dynamic SVG Highway Badge Styling (Stacked Above Street Name) */
+    #highway-badge-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 26px;
+    }
+
+    .highway-shield-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 26px;
     }
 
     /* Streamlined Weather Styling */
@@ -264,7 +280,7 @@
       color: #cccccc;
     }
 
-    /* Highway Speed Sign Tile Styling */
+    /* Highway Speed Sign Tile Styling with Dual Outer/Inner MUTCD Borders */
     .speed-sign-card {
       background-color: #111111;
       padding: 6px;
@@ -279,20 +295,33 @@
     .speed-sign {
       background-color: #ffffff;
       color: #000000;
-      border-radius: 10px;
-      border: 4px solid #000000;
-      box-shadow: inset 0 0 0 2px #ffffff;
+      border-radius: 12px;
+      border: 3px solid #000000; /* Outer Black Border */
+      position: relative;
       width: 92%;
       height: 92%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6px;
+      padding: 8px;
+    }
+
+    /* Thin Black Inner Frame */
+    .speed-sign::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      right: 4px;
+      border: 1.5px solid #000000;
+      border-radius: 8px;
+      pointer-events: none;
     }
 
     .speed-sign-title {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: 1.5px;
       color: #000000;
@@ -310,7 +339,7 @@
     }
 
     .speed-sign-unit {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: 1px;
       color: #000000;
@@ -325,6 +354,8 @@
     <!-- Full-Width Top Card: Location Info Stack -->
     <div class="card" id="location-card">
       <div class="card-content-body">
+        <!-- Badges Rendered Above Street Name -->
+        <div id="highway-badge-container"></div>
         <div class="street-value" id="street-name">Locating...</div>
         <div class="sub-value-large" id="city-state">--</div>
         <div class="sub-value-large" id="county-zip">--</div>
@@ -404,7 +435,7 @@
     let wakeLock = null;
 
     // Map Orientation Mode State
-    let isHeadingUp = true; // true = Heading-Up (lower-third arrow), false = North-Up (centered rotating arrow)
+    let isHeadingUp = true;
 
     // Unit State Variables
     let rawTempF = null;
@@ -424,6 +455,62 @@
       "South Dakota": "SD", "Tennessee": "TN", "Texas": "TX", "Utah": "UT", "Vermont": "VT",
       "Virginia": "VA", "Washington": "WA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"
     };
+
+    // Helper to abbreviate long street suffixes automatically
+    function abbreviateStreetName(streetName) {
+      if (!streetName) return '';
+      return streetName
+        .replace(/\bStreet\b/gi, 'St.')
+        .replace(/\bAvenue\b/gi, 'Ave.')
+        .replace(/\bRoad\b/gi, 'Rd.')
+        .replace(/\bBoulevard\b/gi, 'Blvd.')
+        .replace(/\bHighway\b/gi, 'Hwy.')
+        .replace(/\bParkway\b/gi, 'Pkwy.')
+        .replace(/\bDrive\b/gi, 'Dr.')
+        .replace(/\bLane\b/gi, 'Ln.')
+        .replace(/\bCircle\b/gi, 'Cir.')
+        .replace(/\bCourt\b/gi, 'Ct.')
+        .replace(/\bTurnpike\b/gi, 'Tpk.');
+    }
+
+    function generateHighwayShieldSVG(refText) {
+      if (!refText) return '';
+
+      const routes = refText.split(/[;,/]/).map(r => r.trim()).filter(Boolean);
+
+      const shieldSVGs = routes.map(cleanRef => {
+        const uppercaseRef = cleanRef.toUpperCase();
+
+        if (uppercaseRef.startsWith('I-') || uppercaseRef.startsWith('I ') || uppercaseRef.match(/^I\d+/)) {
+          const num = uppercaseRef.replace(/[^0-9]/g, '');
+          return `
+            <div class="highway-shield-badge">
+              <svg width="26" height="26" viewBox="0 0 100 100">
+                <path d="M 50,4 C 65,4 88,14 96,18 C 96,55 82,82 50,96 C 18,82 4,55 4,18 C 12,14 35,4 50,4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2" />
+                <path d="M 50,7 C 64,7 86,16 93,20 C 93,28 93,32 93,32 L 7,32 C 7,32 7,28 7,20 C 14,16 36,7 50,7 Z" fill="#cc0000" />
+                <path d="M 7,32 L 93,32 C 93,54 80,80 50,93 C 20,80 7,54 7,32 Z" fill="#0033cc" />
+                <text x="50" y="73" fill="#ffffff" font-size="${num.length > 2 ? '34' : '42'}" font-weight="900" font-family="Arial, sans-serif" text-anchor="middle">${num}</text>
+              </svg>
+            </div>
+          `;
+        }
+
+        const numMatch = uppercaseRef.match(/\d+[A-Z]?/);
+        const displayNum = numMatch ? numMatch[0] : uppercaseRef;
+
+        return `
+          <div class="highway-shield-badge">
+            <svg width="26" height="26" viewBox="0 0 100 100">
+              <rect x="4" y="4" width="92" height="92" rx="16" ry="16" fill="#ffffff" stroke="#000000" stroke-width="7" />
+              <rect x="9" y="9" width="82" height="82" rx="12" ry="12" fill="none" stroke="#ffffff" stroke-width="3" />
+              <text x="50" y="65" fill="#000000" font-size="${displayNum.length > 2 ? '38' : '48'}" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle">${displayNum}</text>
+            </svg>
+          </div>
+        `;
+      });
+
+      return shieldSVGs.join('');
+    }
 
     function toggleMapMode(event) {
       if (event) event.stopPropagation();
@@ -544,8 +631,7 @@
         zoom: 17,
         bearing: 0,
         pitch: 0,
-        attributionControl: false,
-        padding: { top: 140, bottom: 0, left: 0, right: 0 }
+        attributionControl: false
       });
 
       // Pointing Vehicle Marker
@@ -558,7 +644,11 @@
         </svg>
       `;
 
-      marker = new maplibregl.Marker({ element: el, rotationAlignment: 'viewport' })
+      marker = new maplibregl.Marker({ 
+        element: el, 
+        rotationAlignment: 'viewport',
+        offset: [0, 50]
+      })
         .setLngLat([-71.2356, 42.3765])
         .addTo(map);
     }
@@ -583,7 +673,9 @@
           const addr = data.address;
           const houseNum = addr.house_number ? `${addr.house_number} ` : '';
           const road = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
-          const fullStreetAddress = `${houseNum}${road}`;
+          
+          // Format street name with standard abbreviations
+          const fullStreetAddress = abbreviateStreetName(`${houseNum}${road}`);
 
           const city = addr.city || addr.town || addr.village || "";
           const stateFull = addr.state || "";
@@ -595,6 +687,15 @@
           document.getElementById('street-name').innerText = fullStreetAddress;
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
+
+          // Generate Highway Shields
+          const refNumber = addr.ref || (road.match(/(?:I-|I\s|US-|Route\s|State Hwy\s)(\d+[A-Z]?)/i) ? road : null);
+          const badgeContainer = document.getElementById('highway-badge-container');
+          if (refNumber) {
+            badgeContainer.innerHTML = generateHighwayShieldSVG(refNumber);
+          } else {
+            badgeContainer.innerHTML = '';
+          }
         }
       } catch (err) {
         console.error("Reverse geocoding error:", err);
@@ -659,37 +760,37 @@
           needleEl.style.transform = `rotate(${heading}deg)`;
         }
 
-        const vehicleEl = document.getElementById('vehicle-arrow-icon');
+        const vehicleSvg = document.querySelector('#vehicle-arrow-icon svg');
 
         if (isHeadingUp) {
-          if (vehicleEl) vehicleEl.style.transform = 'rotate(0deg)';
-          if (map) map.easeTo({ bearing: heading, duration: 300 });
+          if (marker) marker.setOffset([0, 50]);
+          if (vehicleSvg) vehicleSvg.style.transform = 'rotate(0deg)';
+          if (map) map.jumpTo({ bearing: heading });
         } else {
-          if (vehicleEl) vehicleEl.style.transform = `rotate(${heading}deg)`;
-          if (map) map.easeTo({ bearing: 0, duration: 300 });
+          if (marker) marker.setOffset([0, 0]);
+          if (vehicleSvg) vehicleSvg.style.transform = `rotate(${heading}deg)`;
+          if (map) map.jumpTo({ bearing: 0 });
         }
       }
     }
 
     function updateMapCamera(lngLat) {
-      const vehicleEl = document.getElementById('vehicle-arrow-icon');
+      const vehicleSvg = document.querySelector('#vehicle-arrow-icon svg');
 
       if (isHeadingUp) {
-        map.easeTo({
+        if (marker) marker.setOffset([0, 50]);
+        map.jumpTo({
           center: lngLat,
-          bearing: currentHeading,
-          padding: { top: 140, bottom: 0, left: 0, right: 0 },
-          duration: 1000
+          bearing: currentHeading
         });
-        if (vehicleEl) vehicleEl.style.transform = 'rotate(0deg)';
+        if (vehicleSvg) vehicleSvg.style.transform = 'rotate(0deg)';
       } else {
-        map.easeTo({
+        if (marker) marker.setOffset([0, 0]);
+        map.jumpTo({
           center: lngLat,
-          bearing: 0,
-          padding: { top: 0, bottom: 0, left: 0, right: 0 },
-          duration: 1000
+          bearing: 0
         });
-        if (vehicleEl) vehicleEl.style.transform = `rotate(${currentHeading}deg)`;
+        if (vehicleSvg) vehicleSvg.style.transform = `rotate(${currentHeading}deg)`;
       }
     }
 
