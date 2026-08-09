@@ -15,8 +15,8 @@
   
   <link rel="manifest" href='data:application/manifest+json,{"name":"Road Trip","short_name":"RoadTrip","start_url":".","display":"standalone","background_color":"#000000","theme_color":"#000000"}' />
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- MapLibre GL CSS -->
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   
   <style>
     * {
@@ -34,7 +34,7 @@
       overflow: hidden;
     }
 
-    /* Fixed Viewport Proportions: 25% Top Cards, 46% Map, 27% Bottom Cards */
+    /* Grid Layout: Full-width top card (25vh), Map (46vh), Bottom split cards (27vh) */
     .dashboard {
       display: grid;
       grid-template-rows: 25vh 46vh 27vh;
@@ -59,6 +59,12 @@
       height: 100%;
     }
 
+    /* Top Location Card - Spans full width */
+    #location-card {
+      grid-row: 1;
+      grid-column: 1 / span 2;
+    }
+
     /* Map Box Row */
     #map-card {
       grid-row: 2;
@@ -68,6 +74,7 @@
       z-index: 1;
       display: block;
       height: 100%;
+      position: relative;
     }
 
     #map {
@@ -76,62 +83,60 @@
       border-radius: 12px;
     }
 
-    /* Directional Vehicle Arrow Styling */
-    .vehicle-marker-container {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease-out;
-    }
-
-    .card-content-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      width: 100%;
-    }
-
-    /* Primary Data Metrics (Location, Bearing, Temperature) - Normal Weight */
-    .primary-value {
-      font-size: 2.2rem;
-      font-weight: normal;
-      line-height: 1.1;
+    /* MAP OVERLAYS */
+    /* Top-Left: Degree & Heading Badge */
+    .map-overlay-heading {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.85);
       color: #ffffff;
-    }
-
-    .sub-value {
-      font-size: 1.15rem;
-      color: #dddddd;
+      border: 1px solid #444444;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 1.1rem;
       font-weight: normal;
-      margin-top: 2px;
-    }
-
-    /* COMPASS STYLING */
-    .compass-container {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-width: 80px;
+    }
+
+    /* Top-Right: Compact White Compass Dial (Interactive Mode Toggle) */
+    .map-overlay-compass {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid #cccccc;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s, transform 0.15s ease;
+    }
+
+    .map-overlay-compass:active {
+      transform: scale(0.92);
+    }
+
+    /* Highlight ring when Heading-Up mode is active */
+    .map-overlay-compass.active-heading-up {
+      border: 3px solid #007aff;
+    }
+
+    .compass-wrapper-overlay {
+      position: relative;
       width: 100%;
       height: 100%;
-    }
-
-    .compass-wrapper {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      margin-top: 2px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #2a2a2a 0%, #141414 100%);
-      border: 3px solid #444444;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .compass-rose-svg {
@@ -152,13 +157,69 @@
       transform-origin: center center;
     }
 
-    /* Weather Styling - Normal Weight */
-    .weather-location {
-      font-size: 1rem;
-      color: #34c759;
+    /* Directional Vehicle Arrow Styling */
+    .vehicle-marker-container {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease-out;
+    }
+
+    .card-content-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Location Top Card Sizing Adjustments */
+    .street-value {
+      font-size: 1.8rem;
       font-weight: normal;
-      text-transform: uppercase;
+      line-height: 1.15;
+      color: #ffffff;
+    }
+
+    .sub-value-large {
+      font-size: 1.35rem;
+      color: #dddddd;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+
+    .sub-value-meta {
+      font-size: 1.2rem;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+
+    /* Justified Bottom Branding Footer */
+    .branding-footer {
+      position: absolute;
+      bottom: 6px;
+      left: 0;
+      right: 0;
+      font-size: 0.8rem;
+      color: #777777;
+      font-weight: normal;
       letter-spacing: 0.5px;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* Streamlined Weather Styling */
+    .weather-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 100%;
     }
 
     .weather-main {
@@ -168,232 +229,188 @@
       justify-content: center;
     }
 
+    .weather-temp {
+      font-size: 3.2rem;
+      font-weight: normal;
+      line-height: 1;
+      color: #ffffff;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .weather-temp:active {
+      opacity: 0.6;
+    }
+
     .weather-desc-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      font-size: 1.2rem;
+      gap: 8px;
+      font-size: 1.35rem;
       font-weight: normal;
-    }
-
-    .weather-details-line {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      font-size: 1rem;
-      color: #cccccc;
-      margin-top: 2px;
-    }
-
-    .weather-trend {
-      display: flex;
-      justify-content: center;
       margin-top: 4px;
+      color: #dddddd;
+    }
+
+    .weather-details-stacked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 4px;
-      width: 100%;
+      font-size: 1.3rem;
+      color: #cccccc;
     }
 
-    .trend-step {
+    /* Highway Speed Sign Tile Styling */
+    .speed-sign-card {
+      background-color: #111111;
+      padding: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .speed-sign-card:active {
+      opacity: 0.85;
+    }
+
+    .speed-sign {
+      background-color: #ffffff;
+      color: #000000;
+      border-radius: 10px;
+      border: 4px solid #000000;
+      box-shadow: inset 0 0 0 2px #ffffff;
+      width: 92%;
+      height: 92%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 0.85rem;
-      background: #2a2a2a;
-      padding: 4px 4px;
-      border-radius: 4px;
-      flex: 1;
-      color: #ffffff;
-      font-weight: normal;
+      justify-content: center;
+      padding: 6px;
     }
 
-    .sunset-info {
-      font-size: 0.95rem;
-      color: #ff9500;
-      font-weight: normal;
-      margin-top: 4px;
-    }
-
-    /* Stats Layout for Bottom Right - Normal Weight */
-    .stats-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-around;
-      width: 100%;
-      height: 100%;
-    }
-
-    .speed-box {
+    .speed-sign-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #000000;
+      text-transform: uppercase;
+      line-height: 1;
       margin-bottom: 2px;
     }
 
-    .speed-val-text {
-      font-size: 3.8rem !important;
-      font-weight: normal;
-      line-height: 1;
-      color: #ffffff;
+    .speed-sign-value {
+      font-size: 4.8rem;
+      font-weight: bold;
+      line-height: 0.95;
+      color: #000000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
-    .stats-row {
-      display: flex;
-      justify-content: space-around;
-      width: 100%;
-      gap: 8px;
-    }
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 1;
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: #888888;
+    .speed-sign-unit {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #000000;
       text-transform: uppercase;
-      font-weight: normal;
-    }
-
-    .stat-val {
-      font-size: 1.4rem;
-      font-weight: normal;
-      color: #ffffff;
-    }
-
-    /* Reset Buttons Styling - Unbolded for smaller, compact footprint */
-    .btn-reset {
-      background: #333336;
-      color: #ffffff;
-      border: 1px solid #555;
-      border-radius: 4px;
-      padding: 3px 6px;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      font-weight: normal;
-      cursor: pointer;
-      margin-top: 4px;
-      transition: background 0.2s;
-    }
-
-    .btn-reset:active {
-      background: #ff3b30;
-      color: #ffffff;
-      border-color: #ff3b30;
+      margin-top: 2px;
     }
   </style>
 </head>
 <body>
 
   <div class="dashboard">
-    <!-- Top-Left: Location & Elevation -->
+    <!-- Full-Width Top Card: Location Info Stack -->
     <div class="card" id="location-card">
       <div class="card-content-body">
-        <div class="primary-value" id="street-name">Locating...</div>
-        <div class="sub-value" id="city-state">--</div>
-        <div class="sub-value" id="county-zip">--</div>
-        <div class="sub-value" style="color: #4cd964; font-weight: normal; margin-top: 4px;" id="elevation">Elevation: -- ft</div>
+        <div class="street-value" id="street-name">Locating...</div>
+        <div class="sub-value-large" id="city-state">--</div>
+        <div class="sub-value-large" id="county-zip">--</div>
+        <div class="sub-value-meta" style="color: #4cd964;" id="elevation">Elevation: -- ft</div>
+        <div class="sub-value-meta" style="color: #aaaaaa;" id="lat-lon">Lat: -- | Lon: --</div>
       </div>
+      <div class="branding-footer">NOMAD Road Trip app by: BostonyFX</div>
     </div>
 
-    <!-- Top-Right: Compass & Bearing -->
-    <div class="card" id="compass-card">
-      <div class="card-content-body">
-        <div class="compass-container">
-          <div class="primary-value" id="heading-text">0° N</div>
-          <div class="compass-wrapper">
-            <svg class="compass-rose-svg" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="46" fill="none" stroke="#555" stroke-width="1.5" />
-              <text x="50" y="15" fill="#ff3b30" font-size="9" font-weight="normal" text-anchor="middle">N</text>
-              <text x="87" y="53" fill="#aaa" font-size="8" font-weight="normal" text-anchor="middle">E</text>
-              <text x="50" y="91" fill="#aaa" font-size="8" font-weight="normal" text-anchor="middle">S</text>
-              <text x="13" y="53" fill="#aaa" font-size="8" font-weight="normal" text-anchor="middle">W</text>
-              <line x1="50" y1="5" x2="50" y2="8" stroke="#aaa" stroke-width="1" />
-              <line x1="95" y1="50" x2="92" y2="50" stroke="#aaa" stroke-width="1" />
-              <line x1="50" y1="95" x2="50" y2="92" stroke="#aaa" stroke-width="1" />
-              <line x1="5" y1="50" x2="8" y2="50" stroke="#aaa" stroke-width="1" />
-            </svg>
+    <!-- Center Row: Live Map with Overlays -->
+    <div class="card" id="map-card">
+      <!-- Top-Left Overlay: Heading Text -->
+      <div class="map-overlay-heading" id="heading-text">0° N</div>
 
-            <svg class="compass-needle-svg" id="needle-svg" viewBox="0 0 100 100">
-              <polygon points="50,16 45,50 50,47" fill="#ff3b30" />
-              <polygon points="50,16 55,50 50,47" fill="#e02b20" />
-              <polygon points="50,84 45,50 50,53" fill="#cccccc" />
-              <polygon points="50,84 55,50 50,53" fill="#aaaaaa" />
-              <circle cx="50" cy="50" r="4" fill="#ffffff" stroke="#333333" stroke-width="1.5" />
-            </svg>
-          </div>
+      <!-- Top-Right Overlay: Compact White Compass (Click to toggle Map Mode) -->
+      <div class="map-overlay-compass active-heading-up" id="compass-btn" onclick="toggleMapMode(event)">
+        <div class="compass-wrapper-overlay">
+          <svg class="compass-rose-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#ccc" stroke-width="2" />
+            <text x="50" y="16" fill="#ff3b30" font-size="11" font-weight="bold" text-anchor="middle">N</text>
+            <text x="86" y="54" fill="#333" font-size="10" font-weight="bold" text-anchor="middle">E</text>
+            <text x="50" y="92" fill="#333" font-size="10" font-weight="bold" text-anchor="middle">S</text>
+            <text x="14" y="54" fill="#333" font-size="10" font-weight="bold" text-anchor="middle">W</text>
+          </svg>
+
+          <svg class="compass-needle-svg" id="needle-svg" viewBox="0 0 100 100">
+            <polygon points="50,16 45,50 50,47" fill="#ff3b30" />
+            <polygon points="50,16 55,50 50,47" fill="#e02b20" />
+            <polygon points="50,84 45,50 50,53" fill="#666666" />
+            <polygon points="50,84 55,50 50,53" fill="#444444" />
+            <circle cx="50" cy="50" r="4" fill="#ffffff" stroke="#333333" stroke-width="1.5" />
+          </svg>
         </div>
       </div>
-    </div>
 
-    <!-- Center: Live Map -->
-    <div class="card" id="map-card">
       <div id="map"></div>
     </div>
 
-    <!-- Bottom-Left: Weather & Trend -->
+    <!-- Bottom-Left: Weather -->
     <div class="card" id="weather-card">
       <div class="card-content-body">
-        <div class="weather-location" id="weather-city-state">--</div>
-        <div class="weather-main">
-          <div>
-            <div class="primary-value" id="current-temp" style="font-size: 2.6rem;">--°F</div>
-            <div class="sub-value" id="weather-desc">Fetching weather...</div>
+        <div class="weather-container">
+          <div class="weather-main">
+            <div class="weather-temp" id="current-temp" onclick="toggleTemperatureUnit(event)">--°F</div>
+            <div id="weather-desc">
+              <div class="weather-desc-container">Fetching weather...</div>
+            </div>
           </div>
-        </div>
-        <div class="weather-details-line" id="weather-extra">
-          <span>Hum: <strong style="color: #ffffff; font-weight: normal;" id="humidity-val">--%</strong></span>
-          <span>UV: <strong style="color: #ffffff; font-weight: normal;" id="uv-val">--</strong></span>
-        </div>
-        <div class="weather-trend" id="forecast-trend">
-          <!-- Dynamic trend pills load here -->
-        </div>
-        <div class="sunset-info">
-          Sunset In: <span id="sunset-time">--:--</span>
+          <div class="weather-details-stacked" id="weather-extra">
+            <div>Hum: <strong style="color: #ffffff; font-weight: normal;" id="humidity-val">--%</strong></div>
+            <div>UV: <strong style="color: #ffffff; font-weight: normal;" id="uv-val">--</strong></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Bottom-Right: Trip Stats -->
-    <div class="card" id="trip-card">
-      <div class="card-content-body">
-        <div class="stats-container">
-          <div class="stat-item speed-box">
-            <span class="stat-label">SPEED</span>
-            <span class="stat-val speed-val-text" id="current-speed">0 <small style="font-size:1.2rem; font-weight: normal;">mph</small></span>
-          </div>
-
-          <div class="stats-row">
-            <div class="stat-item">
-              <span class="stat-label">Distance</span>
-              <span class="stat-val" id="trip-distance">0.0 <small style="font-size:0.8rem; font-weight: normal;">mi</small></span>
-              <button class="btn-reset" onclick="resetDistance()">Reset Dist</button>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Elapsed</span>
-              <span class="stat-val" id="trip-time">00:00</span>
-              <button class="btn-reset" onclick="resetTimer()">Reset Time</button>
-            </div>
-          </div>
-        </div>
+    <!-- Bottom-Right: Speed Sign Tile (Click to Toggle MPH / KM/H) -->
+    <div class="card speed-sign-card" id="trip-card" onclick="toggleSpeedUnit(event)">
+      <div class="speed-sign">
+        <div class="speed-sign-title">SPEED</div>
+        <div class="speed-sign-value" id="current-speed">0</div>
+        <div class="speed-sign-unit" id="speed-unit-label">MPH</div>
       </div>
     </div>
   </div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- MapLibre GL JS -->
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
   <script>
     // App State Variables
     let map, marker;
+    let currentHeading = 0;
     let lastLat = null, lastLon = null;
-    let totalDistance = 0; // miles
-    let startTime = new Date();
     let lastWeatherFetchTime = 0;
     let lastGeocodeTime = 0;
     let wakeLock = null;
+
+    // Map Orientation Mode State
+    let isHeadingUp = true; // true = Heading-Up (lower-third arrow), false = North-Up (centered rotating arrow)
+
+    // Unit State Variables
+    let rawTempF = null;
+    let isFahrenheit = true;
+    let rawSpeedMps = 0;
+    let isMph = true;
 
     const stateAbbreviations = {
       "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
@@ -408,14 +425,70 @@
       "Virginia": "VA", "Washington": "WA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"
     };
 
-    function resetDistance() {
-      totalDistance = 0;
-      document.getElementById('trip-distance').innerHTML = `0.0 <small style="font-size:0.8rem; font-weight: normal;">mi</small>`;
+    function toggleMapMode(event) {
+      if (event) event.stopPropagation();
+      isHeadingUp = !isHeadingUp;
+
+      const compassBtn = document.getElementById('compass-btn');
+      if (isHeadingUp) {
+        compassBtn.classList.add('active-heading-up');
+      } else {
+        compassBtn.classList.remove('active-heading-up');
+      }
+
+      if (lastLat !== null && lastLon !== null) {
+        updateMapCamera([lastLon, lastLat]);
+      }
     }
 
-    function resetTimer() {
-      startTime = new Date();
-      document.getElementById('trip-time').innerText = "00:00";
+    function toggleTemperatureUnit(event) {
+      if (event) event.stopPropagation();
+      if (rawTempF === null) return;
+
+      isFahrenheit = !isFahrenheit;
+      renderTemperature();
+    }
+
+    function renderTemperature() {
+      const tempEl = document.getElementById('current-temp');
+      if (rawTempF === null) {
+        tempEl.innerText = '--°F';
+        return;
+      }
+
+      if (isFahrenheit) {
+        tempEl.innerText = `${Math.round(rawTempF)}°F`;
+      } else {
+        const tempC = (rawTempF - 32) * (5 / 9);
+        tempEl.innerText = `${Math.round(tempC)}°C`;
+      }
+    }
+
+    function toggleSpeedUnit(event) {
+      if (event) event.stopPropagation();
+      isMph = !isMph;
+      renderSpeed();
+    }
+
+    function renderSpeed() {
+      const speedValueEl = document.getElementById('current-speed');
+      const speedUnitEl = document.getElementById('speed-unit-label');
+
+      if (rawSpeedMps === null || isNaN(rawSpeedMps) || rawSpeedMps < 0) {
+        speedValueEl.innerText = '0';
+        speedUnitEl.innerText = isMph ? 'MPH' : 'KM/H';
+        return;
+      }
+
+      if (isMph) {
+        const mph = Math.round(rawSpeedMps * 2.23694);
+        speedValueEl.innerText = mph;
+        speedUnitEl.innerText = 'MPH';
+      } else {
+        const kmh = Math.round(rawSpeedMps * 3.6);
+        speedValueEl.innerText = kmh;
+        speedUnitEl.innerText = 'KM/H';
+      }
     }
 
     async function requestWakeLock() {
@@ -437,12 +510,12 @@
 
     function getWeatherInfo(code) {
       const icons = {
-        sun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-        cloudSun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
-        cloud: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
-        rain: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
-        thunder: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-        snow: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
+        sun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        cloudSun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
+        cloud: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
+        rain: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
+        thunder: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+        snow: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
       };
 
       const weatherMap = {
@@ -462,28 +535,32 @@
       return weatherMap[code] || { text: "Fair", icon: icons.cloudSun };
     }
 
+    // Initialize MapLibre GL Vector Engine
     function initMap() {
-      map = L.map('map', { zoomControl: false }).setView([42.3765, -71.2356], 19);
-      
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-      }).addTo(map);
-
-      const locationIcon = L.divIcon({
-        className: 'vehicle-marker-wrapper',
-        html: `
-          <div class="vehicle-marker-container" id="map-vehicle-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));">
-              <polygon points="12 2 19 21 12 17 5 21 12 2"/>
-            </svg>
-          </div>
-        `,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18]
+      map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+        center: [-71.2356, 42.3765],
+        zoom: 17,
+        bearing: 0,
+        pitch: 0,
+        attributionControl: false,
+        padding: { top: 140, bottom: 0, left: 0, right: 0 }
       });
 
-      marker = L.marker([42.3765, -71.2356], { icon: locationIcon }).addTo(map);
+      // Pointing Vehicle Marker
+      const el = document.createElement('div');
+      el.className = 'vehicle-marker-container';
+      el.id = 'vehicle-arrow-icon';
+      el.innerHTML = `
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));">
+          <polygon points="12 2 19 21 12 17 5 21 12 2"/>
+        </svg>
+      `;
+
+      marker = new maplibregl.Marker({ element: el, rotationAlignment: 'viewport' })
+        .setLngLat([-71.2356, 42.3765])
+        .addTo(map);
     }
 
     function getCardinalDirection(angle) {
@@ -491,19 +568,9 @@
       return directions[Math.round(angle / 45) % 8];
     }
 
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 3958.8;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    }
-
     async function fetchLocationDetails(lat, lon) {
+      document.getElementById('lat-lon').innerText = `Lat: ${lat.toFixed(5)} | Lon: ${lon.toFixed(5)}`;
+
       const now = Date.now();
       if (now - lastGeocodeTime < 15000) return;
       lastGeocodeTime = now;
@@ -514,7 +581,10 @@
         
         if (data && data.address) {
           const addr = data.address;
+          const houseNum = addr.house_number ? `${addr.house_number} ` : '';
           const road = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
+          const fullStreetAddress = `${houseNum}${road}`;
+
           const city = addr.city || addr.town || addr.village || "";
           const stateFull = addr.state || "";
           const county = addr.county || "";
@@ -522,13 +592,9 @@
 
           const stateCode = stateAbbreviations[stateFull] || stateFull;
 
-          document.getElementById('street-name').innerText = road;
+          document.getElementById('street-name').innerText = fullStreetAddress;
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
-
-          if (city && stateCode) {
-            document.getElementById('weather-city-state').innerText = `${city}, ${stateCode}`;
-          }
         }
       } catch (err) {
         console.error("Reverse geocoding error:", err);
@@ -541,7 +607,7 @@
       lastWeatherFetchTime = now;
 
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,uv_index&hourly=temperature_2m&daily=sunset&temperature_unit=fahrenheit&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,uv_index&temperature_unit=fahrenheit&timezone=auto`;
         const response = await fetch(url);
         const data = await response.json();
 
@@ -551,8 +617,10 @@
         }
 
         if (data.current) {
+          rawTempF = data.current.temperature_2m;
+          renderTemperature();
+
           const info = getWeatherInfo(data.current.weather_code);
-          document.getElementById('current-temp').innerText = `${Math.round(data.current.temperature_2m)}°F`;
           document.getElementById('weather-desc').innerHTML = `
             <div class="weather-desc-container">
               ${info.icon} <span>${info.text}</span>
@@ -574,70 +642,54 @@
           }
         }
 
-        if (data.hourly && data.hourly.temperature_2m) {
-          const trendContainer = document.getElementById('forecast-trend');
-          trendContainer.innerHTML = '';
-          const currentHour = new Date().getHours();
-
-          for (let i = 1; i <= 4; i++) {
-            const targetIndex = currentHour + (i * 2);
-            if (data.hourly.temperature_2m[targetIndex] !== undefined) {
-              const temp = Math.round(data.hourly.temperature_2m[targetIndex]);
-              const stepEl = document.createElement('div');
-              stepEl.className = 'trend-step';
-              stepEl.innerHTML = `<span>+${i*2}h</span><span style="font-weight: normal;">${temp}°</span>`;
-              trendContainer.appendChild(stepEl);
-            }
-          }
-        }
-
-        if (data.daily && data.daily.sunset && data.daily.sunset[0]) {
-          updateSunsetCountdown(data.daily.sunset[0]);
-        }
-
       } catch (err) {
         console.error("Weather API error:", err);
       }
     }
 
-    function updateSunsetCountdown(sunsetIsoString) {
-      const sunsetTime = new Date(sunsetIsoString).getTime();
-      const now = new Date().getTime();
-      const diffMs = sunsetTime - now;
-
-      if (diffMs > 0) {
-        const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-        const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-        document.getElementById('sunset-time').innerText = `${hrs}h ${mins}m`;
-      } else {
-        document.getElementById('sunset-time').innerText = "Dusk/Night";
-      }
-    }
-
-    setInterval(() => {
-      const elapsedMs = new Date() - startTime;
-      const totalSecs = Math.floor(elapsedMs / 1000);
-      const hrs = Math.floor(totalSecs / 3600);
-      const mins = Math.floor((totalSecs % 3600) / 60);
-      
-      const formatted = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-      document.getElementById('trip-time').innerText = formatted;
-    }, 10000);
-
     function updateHeading(heading) {
       if (heading !== null && !isNaN(heading)) {
+        currentHeading = heading;
         const cardinal = getCardinalDirection(heading);
         document.getElementById('heading-text').innerText = `${Math.round(heading)}° ${cardinal}`;
         
+        // Overlay compass needle rotation
         const needleEl = document.getElementById('needle-svg');
         if (needleEl) {
           needleEl.style.transform = `rotate(${heading}deg)`;
         }
 
-        const vehicleEl = document.getElementById('map-vehicle-icon');
-        if (vehicleEl) {
-          vehicleEl.style.transform = `rotate(${heading}deg)`;
+        const vehicleEl = document.getElementById('vehicle-arrow-icon');
+
+        if (isHeadingUp) {
+          if (vehicleEl) vehicleEl.style.transform = 'rotate(0deg)';
+          if (map) map.easeTo({ bearing: heading, duration: 300 });
+        } else {
+          if (vehicleEl) vehicleEl.style.transform = `rotate(${heading}deg)`;
+          if (map) map.easeTo({ bearing: 0, duration: 300 });
         }
+      }
+    }
+
+    function updateMapCamera(lngLat) {
+      const vehicleEl = document.getElementById('vehicle-arrow-icon');
+
+      if (isHeadingUp) {
+        map.easeTo({
+          center: lngLat,
+          bearing: currentHeading,
+          padding: { top: 140, bottom: 0, left: 0, right: 0 },
+          duration: 1000
+        });
+        if (vehicleEl) vehicleEl.style.transform = 'rotate(0deg)';
+      } else {
+        map.easeTo({
+          center: lngLat,
+          bearing: 0,
+          padding: { top: 0, bottom: 0, left: 0, right: 0 },
+          duration: 1000
+        });
+        if (vehicleEl) vehicleEl.style.transform = `rotate(${currentHeading}deg)`;
       }
     }
 
@@ -647,24 +699,21 @@
           (position) => {
             const { latitude, longitude, heading, speed } = position.coords;
 
-            const newPos = [latitude, longitude];
-            marker.setLatLng(newPos);
-            map.panTo(newPos);
+            const lngLat = [longitude, latitude];
+            marker.setLngLat(lngLat);
 
-            updateHeading(heading);
-
-            if (speed !== null && !isNaN(speed)) {
-              const mph = Math.round(speed * 2.23694);
-              document.getElementById('current-speed').innerHTML = `${mph} <small style="font-size:1.2rem; font-weight: normal;">mph</small>`;
+            if (heading !== null && !isNaN(heading)) {
+              currentHeading = heading;
             }
 
-            if (lastLat !== null && lastLon !== null) {
-              const distStep = calculateDistance(lastLat, lastLon, latitude, longitude);
-              if (distStep > 0.005) {
-                totalDistance += distStep;
-                document.getElementById('trip-distance').innerHTML = `${totalDistance.toFixed(1)} <small style="font-size:0.8rem; font-weight: normal;">mi</small>`;
-              }
+            updateMapCamera(lngLat);
+
+            if (heading !== null && !isNaN(heading)) {
+              updateHeading(heading);
             }
+
+            rawSpeedMps = speed;
+            renderSpeed();
 
             lastLat = latitude;
             lastLon = longitude;
