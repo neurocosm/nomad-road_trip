@@ -7,13 +7,13 @@
   
   <title>Road Trip</title>
 
-  <!-- Web App Manifest for Native Standalone Fullscreen -->
+  <!-- Web App Manifest for Native Standalone Fullscreen (URL-Encoded to fix syntax/CORS fragment errors) -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#000000" />
   
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Road Trip","short_name":"RoadTrip","start_url":".","display":"standalone","background_color":"#000000","theme_color":"#000000"}' />
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Road%20Trip","short_name":"RoadTrip","start_url":".","display":"standalone","background_color":"%23000000","theme_color":"%23000000"}' />
 
   <!-- MapLibre GL CSS -->
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
@@ -157,6 +157,23 @@
       transform-origin: center center;
     }
 
+    /* Absolute Bottom Branding Overlay on Map Stage (Unbolded, Subtle Weight) */
+    .map-overlay-branding {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      text-align: center;
+      pointer-events: none;
+      text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9);
+    }
+
     /* Directional Vehicle Arrow Styling */
     .vehicle-marker-container {
       width: 36px;
@@ -177,7 +194,7 @@
 
     /* Location Top Card Sizing Adjustments */
     .street-value {
-      font-size: 1.75rem;
+      font-size: 1.8rem;
       font-weight: normal;
       line-height: 1.15;
       color: #ffffff;
@@ -185,33 +202,19 @@
     }
 
     .sub-value-large {
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       color: #dddddd;
       font-weight: normal;
       margin-top: 2px;
     }
 
     .sub-value-meta {
-      font-size: 1.15rem;
+      font-size: 1.2rem;
       font-weight: normal;
       margin-top: 2px;
     }
 
-    /* Justified Bottom Branding Footer */
-    .branding-footer {
-      position: absolute;
-      bottom: 6px;
-      left: 0;
-      right: 0;
-      font-size: 0.8rem;
-      color: #777777;
-      font-weight: normal;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      text-align: center;
-    }
-
-    /* Dynamic SVG Highway Badge Styling (Stacked Above Street Name) */
+    /* Dynamic SVG Highway Badge Styling */
     #highway-badge-container {
       display: flex;
       align-items: center;
@@ -280,7 +283,7 @@
       color: #cccccc;
     }
 
-    /* Highway Speed Sign Tile Styling with Dual Outer/Inner MUTCD Borders */
+    /* Highway Speed Sign Tile Styling */
     .speed-sign-card {
       background-color: #111111;
       padding: 6px;
@@ -296,7 +299,7 @@
       background-color: #ffffff;
       color: #000000;
       border-radius: 12px;
-      border: 3px solid #000000; /* Outer Black Border */
+      border: 3.5px solid #000000;
       position: relative;
       width: 92%;
       height: 92%;
@@ -307,16 +310,15 @@
       padding: 8px;
     }
 
-    /* Thin Black Inner Frame */
     .speed-sign::after {
       content: '';
       position: absolute;
-      top: 4px;
-      bottom: 4px;
-      left: 4px;
-      right: 4px;
-      border: 1.5px solid #000000;
-      border-radius: 8px;
+      top: 8px;
+      bottom: 8px;
+      left: 8px;
+      right: 8px;
+      border: 3px solid #000000;
+      border-radius: 6px;
       pointer-events: none;
     }
 
@@ -354,7 +356,6 @@
     <!-- Full-Width Top Card: Location Info Stack -->
     <div class="card" id="location-card">
       <div class="card-content-body">
-        <!-- Badges Rendered Above Street Name -->
         <div id="highway-badge-container"></div>
         <div class="street-value" id="street-name">Locating...</div>
         <div class="sub-value-large" id="city-state">--</div>
@@ -362,7 +363,6 @@
         <div class="sub-value-meta" style="color: #4cd964;" id="elevation">Elevation: -- ft</div>
         <div class="sub-value-meta" style="color: #aaaaaa;" id="lat-lon">Lat: -- | Lon: --</div>
       </div>
-      <div class="branding-footer">NOMAD Road Trip app by: BostonyFX</div>
     </div>
 
     <!-- Center Row: Live Map with Overlays -->
@@ -390,6 +390,9 @@
           </svg>
         </div>
       </div>
+
+      <!-- Bottom-Center Overlay: Light-weight Subdued Map Branding -->
+      <div class="map-overlay-branding">NOMAD Road Trip app by: BostonyFX</div>
 
       <div id="map"></div>
     </div>
@@ -456,7 +459,6 @@
       "Virginia": "VA", "Washington": "WA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"
     };
 
-    // Helper to abbreviate long street suffixes automatically
     function abbreviateStreetName(streetName) {
       if (!streetName) return '';
       return streetName
@@ -674,7 +676,6 @@
           const houseNum = addr.house_number ? `${addr.house_number} ` : '';
           const road = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
           
-          // Format street name with standard abbreviations
           const fullStreetAddress = abbreviateStreetName(`${houseNum}${road}`);
 
           const city = addr.city || addr.town || addr.village || "";
@@ -688,7 +689,6 @@
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
 
-          // Generate Highway Shields
           const refNumber = addr.ref || (road.match(/(?:I-|I\s|US-|Route\s|State Hwy\s)(\d+[A-Z]?)/i) ? road : null);
           const badgeContainer = document.getElementById('highway-badge-container');
           if (refNumber) {
@@ -754,7 +754,6 @@
         const cardinal = getCardinalDirection(heading);
         document.getElementById('heading-text').innerText = `${Math.round(heading)}° ${cardinal}`;
         
-        // Overlay compass needle rotation
         const needleEl = document.getElementById('needle-svg');
         if (needleEl) {
           needleEl.style.transform = `rotate(${heading}deg)`;
