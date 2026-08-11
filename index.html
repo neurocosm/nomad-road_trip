@@ -210,17 +210,17 @@
       display: none;
     }
 
-    /* Absolute Bottom-Center Fullscreen Toggle Button */
+    /* Top-Center Overlay: Fullscreen Toggle Button */
     .map-overlay-fullscreen {
       position: absolute;
-      bottom: 8px;
+      top: 8px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 12;
       background: rgba(0, 0, 0, 0.85);
       border: 1px solid #444444;
       border-radius: 8px;
-      padding: 6px;
+      padding: 5px 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
@@ -231,6 +231,30 @@
     }
 
     .map-overlay-fullscreen:active {
+      transform: translateX(-50%) scale(0.92);
+    }
+
+    /* Lower-Center Overlay: Recenter / "Call Home" House Button */
+    .map-overlay-recenter {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 12;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #444444;
+      border-radius: 8px;
+      padding: 5px 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, border-color 0.2s;
+    }
+
+    .map-overlay-recenter:active {
       transform: translateX(-50%) scale(0.92);
     }
 
@@ -533,6 +557,13 @@
       <!-- Top-Left Overlay: Heading Text -->
       <div class="map-overlay-heading" id="heading-text" onclick="copyLocationLink(event)">0° N</div>
 
+      <!-- Top-Center Overlay: Fullscreen Toggle Button -->
+      <div class="map-overlay-fullscreen" id="fullscreen-btn" onclick="toggleFullScreen(event)">
+        <svg id="fullscreen-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+        </svg>
+      </div>
+
       <!-- Top-Right Overlay: Compact White Compass -->
       <div class="map-overlay-compass active-heading-up" id="compass-btn" onclick="toggleMapMode(event)">
         <div class="compass-wrapper-overlay">
@@ -557,15 +588,16 @@
       <!-- Lower-Left Overlay: Interstate Badge -->
       <div class="map-overlay-interstate" id="interstate-badge-container"></div>
 
-      <!-- Lower-Right Overlay: Route Badge -->
-      <div class="map-overlay-route" id="route-badge-container"></div>
-
-      <!-- Lower-Center Overlay: Fullscreen Toggle Button -->
-      <div class="map-overlay-fullscreen" id="fullscreen-btn" onclick="toggleFullScreen(event)">
-        <svg id="fullscreen-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+      <!-- Lower-Center Overlay: Recenter / "Call Home" House Button -->
+      <div class="map-overlay-recenter" id="recenter-btn" onclick="recenterMap(event)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
+
+      <!-- Lower-Right Overlay: Route Badge -->
+      <div class="map-overlay-route" id="route-badge-container"></div>
 
       <div id="map"></div>
     </div>
@@ -726,6 +758,13 @@
         icon.innerHTML = '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />';
       }
     });
+
+    function recenterMap(event) {
+      if (event) event.stopPropagation();
+      if (lastLat !== null && lastLon !== null) {
+        updateMapCamera([lastLon, lastLat]);
+      }
+    }
 
     function copyLocationLink(event) {
       if (event) event.stopPropagation();
