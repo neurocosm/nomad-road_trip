@@ -37,26 +37,25 @@
       overflow: hidden;
     }
 
-    /* Proportional Grid Layout that hard-fits 100dvh */
+    /* Grid Proportions: Prioritizes center map height */
     .dashboard {
       display: grid;
-      grid-template-rows: 25fr 46fr 27fr;
+      grid-template-rows: 20fr 56fr 24fr;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 5px;
       height: 100vh;
       height: 100dvh;
-      padding: 6px;
-      padding-top: max(6px, env(safe-area-inset-top));
-      padding-bottom: max(6px, env(safe-area-inset-bottom));
+      padding: 5px;
+      padding-top: max(4px, env(safe-area-inset-top));
+      padding-bottom: max(4px, env(safe-area-inset-bottom));
       background-color: #000000;
     }
 
-    /* Crucial: min-height: 0 allows grid cards to shrink without overflowing */
     .card {
       background-color: #1e1e1e;
       border-radius: 12px;
       border: 1px solid #333333;
-      padding: 4px;
+      padding: 2px 4px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -97,21 +96,21 @@
     /* MAP OVERLAYS */
     .map-overlay-heading {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 8px;
+      left: 8px;
       z-index: 10;
       background: rgba(0, 0, 0, 0.85);
       color: #ffffff;
       border: 1px solid #444444;
-      padding: 6px 12px;
+      padding: 4px 10px;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: min(0.95rem, 3.5vw);
       font-weight: normal;
       box-shadow: 0 2px 6px rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 75px;
+      min-width: 70px;
       cursor: pointer;
       user-select: none;
       transition: border-color 0.2s, transform 0.15s ease, color 0.2s ease;
@@ -123,11 +122,11 @@
 
     .map-overlay-compass {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 8px;
+      right: 8px;
       z-index: 10;
-      width: 54px;
-      height: 54px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: #ffffff;
       border: 2px solid #cccccc;
@@ -174,36 +173,36 @@
 
     .map-overlay-interstate {
       position: absolute;
-      bottom: 10px;
-      left: 10px;
+      bottom: 8px;
+      left: 8px;
       z-index: 10;
       background: rgba(0, 0, 0, 0.85);
       border: 1px solid #444444;
       border-radius: 8px;
-      padding: 4px 6px;
+      padding: 3px 5px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 38px;
-      min-height: 38px;
+      min-width: 36px;
+      min-height: 36px;
     }
 
     .map-overlay-route {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
+      bottom: 8px;
+      right: 8px;
       z-index: 10;
       background: rgba(0, 0, 0, 0.85);
       border: 1px solid #444444;
       border-radius: 8px;
-      padding: 4px 6px;
+      padding: 3px 5px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 38px;
-      min-height: 38px;
+      min-width: 36px;
+      min-height: 36px;
     }
 
     .map-overlay-interstate:empty,
@@ -211,9 +210,33 @@
       display: none;
     }
 
+    /* Absolute Bottom-Center Fullscreen Toggle Button */
+    .map-overlay-fullscreen {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 12;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #444444;
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease, border-color 0.2s;
+    }
+
+    .map-overlay-fullscreen:active {
+      transform: translateX(-50%) scale(0.92);
+    }
+
     .vehicle-marker-container {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -238,21 +261,21 @@
     }
 
     .street-value {
-      font-size: min(1.7rem, 5.2vw);
+      font-size: min(1.5rem, 4.8vw);
       font-weight: normal;
-      line-height: 1.15;
+      line-height: 1.1;
       color: #ffffff;
     }
 
     .sub-value-large {
-      font-size: min(1.25rem, 4.2vw);
+      font-size: min(1.15rem, 3.8vw);
       color: #dddddd;
       font-weight: normal;
       margin-top: 1px;
     }
 
     .sub-value-meta {
-      font-size: min(1.1rem, 3.8vw);
+      font-size: min(1rem, 3.4vw);
       font-weight: normal;
       margin-top: 1px;
     }
@@ -261,7 +284,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 30px;
+      height: 28px;
     }
 
     .weather-container {
@@ -269,7 +292,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 2px;
       width: 100%;
       height: 100%;
       min-height: 0;
@@ -283,7 +306,7 @@
     }
 
     .weather-temp {
-      font-size: min(2.8rem, 9vh);
+      font-size: min(2.5rem, 7vh);
       font-weight: normal;
       line-height: 1;
       color: #ffffff;
@@ -300,10 +323,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      font-size: min(1.2rem, 3.8vw);
+      gap: 4px;
+      font-size: min(1.1rem, 3.4vw);
       font-weight: normal;
-      margin-top: 2px;
+      margin-top: 1px;
       color: #dddddd;
     }
 
@@ -312,14 +335,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
-      font-size: min(1.15rem, 3.6vw);
+      gap: 1px;
+      font-size: min(1rem, 3.2vw);
       color: #cccccc;
     }
 
     .speed-sign-card {
       background-color: #111111;
-      padding: 4px;
+      padding: 3px;
       cursor: pointer;
       user-select: none;
     }
@@ -334,23 +357,23 @@
       border-radius: 10px;
       border: 3px solid #000000;
       position: relative;
-      width: 95%;
-      height: 95%;
+      width: 96%;
+      height: 96%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 4px;
+      padding: 2px;
       transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     }
 
     .speed-sign::after {
       content: '';
       position: absolute;
-      top: 4px;
-      bottom: 4px;
-      left: 4px;
-      right: 4px;
+      top: 3px;
+      bottom: 3px;
+      left: 3px;
+      right: 3px;
       border: 2px solid #000000;
       border-radius: 6px;
       pointer-events: none;
@@ -365,22 +388,22 @@
     }
 
     .speed-sign-title {
-      font-size: min(1rem, 3.2vw);
+      font-size: min(0.9rem, 2.8vw);
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       line-height: 1;
     }
 
     .speed-sign-value {
-      font-size: min(4rem, 11vh);
+      font-size: min(3.4rem, 9vh);
       font-weight: bold;
-      line-height: 0.95;
+      line-height: 0.92;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
     .speed-sign-unit {
-      font-size: min(1rem, 3.2vw);
+      font-size: min(0.9rem, 2.8vw);
       font-weight: 800;
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -494,7 +517,7 @@
 <body>
 
   <div class="dashboard">
-    <!-- Full-Width Top Card: Location Info Stack (Long-press triggers About modal) -->
+    <!-- Full-Width Top Card: Location Info Stack -->
     <div class="card" id="location-card">
       <div class="card-content-body">
         <div class="street-value" id="street-name">Locating...</div>
@@ -507,7 +530,7 @@
 
     <!-- Center Row: Live Map with Overlays -->
     <div class="card" id="map-card">
-      <!-- Top-Left Overlay: Heading Text (Click to Copy Google Maps Link) -->
+      <!-- Top-Left Overlay: Heading Text -->
       <div class="map-overlay-heading" id="heading-text" onclick="copyLocationLink(event)">0° N</div>
 
       <!-- Top-Right Overlay: Compact White Compass -->
@@ -536,6 +559,13 @@
 
       <!-- Lower-Right Overlay: Route Badge -->
       <div class="map-overlay-route" id="route-badge-container"></div>
+
+      <!-- Lower-Center Overlay: Fullscreen Toggle Button -->
+      <div class="map-overlay-fullscreen" id="fullscreen-btn" onclick="toggleFullScreen(event)">
+        <svg id="fullscreen-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+        </svg>
+      </div>
 
       <div id="map"></div>
     </div>
@@ -641,7 +671,7 @@
     function createInterstateSVG(num) {
       return `
         <div class="highway-shield-badge">
-          <svg width="30" height="30" viewBox="0 0 100 100">
+          <svg width="28" height="28" viewBox="0 0 100 100">
             <path d="M 50,4 C 65,4 88,14 96,18 C 96,55 82,82 50,96 C 18,82 4,55 4,18 C 12,14 35,4 50,4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2" />
             <path d="M 50,7 C 64,7 86,16 93,20 C 93,28 93,32 93,32 L 7,32 C 7,32 7,28 7,20 C 14,16 36,7 50,7 Z" fill="#cc0000" />
             <path d="M 7,32 L 93,32 C 93,54 80,80 50,93 C 20,80 7,54 7,32 Z" fill="#0033cc" />
@@ -654,7 +684,7 @@
     function createRouteSVG(num) {
       return `
         <div class="highway-shield-badge">
-          <svg width="30" height="30" viewBox="0 0 100 100">
+          <svg width="28" height="28" viewBox="0 0 100 100">
             <rect x="4" y="4" width="92" height="92" rx="16" ry="16" fill="#ffffff" stroke="#000000" stroke-width="7" />
             <rect x="9" y="9" width="82" height="82" rx="12" ry="12" fill="none" stroke="#ffffff" stroke-width="3" />
             <text x="50" y="65" fill="#000000" font-size="${num.length > 2 ? '38' : '48'}" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle">${num}</text>
@@ -662,6 +692,40 @@
         </div>
       `;
     }
+
+    function toggleFullScreen(event) {
+      if (event) event.stopPropagation();
+
+      const doc = document.documentElement;
+      const icon = document.getElementById('fullscreen-icon');
+
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (doc.requestFullscreen) {
+          doc.requestFullscreen();
+        } else if (doc.webkitRequestFullscreen) {
+          doc.webkitRequestFullscreen();
+        }
+        if (icon) {
+          icon.innerHTML = '<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7" />';
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        if (icon) {
+          icon.innerHTML = '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />';
+        }
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const icon = document.getElementById('fullscreen-icon');
+      if (!document.fullscreenElement && icon) {
+        icon.innerHTML = '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />';
+      }
+    });
 
     function copyLocationLink(event) {
       if (event) event.stopPropagation();
@@ -829,12 +893,12 @@
 
     function getWeatherInfo(code) {
       const icons = {
-        sun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-        cloudSun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
-        cloud: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8.5a7 7 0 0 1-1.2-13.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.6 11.5Z"/></svg>`,
-        rain: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
-        thunder: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-        snow: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
+        sun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        cloudSun: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
+        cloud: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8.5a7 7 0 0 1-1.2-13.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.6 11.5Z"/></svg>`,
+        rain: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
+        thunder: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+        snow: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
       };
 
       const weatherMap = {
