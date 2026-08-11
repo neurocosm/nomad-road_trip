@@ -7,7 +7,7 @@
   
   <title>Road Trip</title>
 
-  <!-- Web App Manifest for Native Standalone Fullscreen (URL-Encoded to fix syntax/CORS fragment errors) -->
+  <!-- Web App Manifest for Native Standalone Setup -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -23,6 +23,8 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-touch-callout: none;
+      user-select: none;
     }
 
     html, body {
@@ -42,12 +44,14 @@
       gap: 6px;
       height: 100vh;
       padding: 6px;
+      padding-top: max(6px, env(safe-area-inset-top));
       background-color: #000000;
     }
 
     .card {
       background-color: #1e1e1e;
       border-radius: 12px;
+      border: 1px solid #333333;
       padding: 6px;
       display: flex;
       flex-direction: column;
@@ -63,6 +67,7 @@
     #location-card {
       grid-row: 1;
       grid-column: 1 / span 2;
+      cursor: pointer;
     }
 
     /* Map Box Row */
@@ -75,16 +80,17 @@
       display: block;
       height: 100%;
       position: relative;
+      border: 1px solid #333333;
     }
 
     #map {
       width: 100%;
       height: 100%;
-      border-radius: 12px;
+      border-radius: 11px;
     }
 
     /* MAP OVERLAYS */
-    /* Top-Left: Degree & Heading Badge */
+    /* Top-Left: Degree & Heading Badge (Interactive Copy Location Button) */
     .map-overlay-heading {
       position: absolute;
       top: 10px;
@@ -102,9 +108,15 @@
       align-items: center;
       justify-content: center;
       min-width: 80px;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s, transform 0.15s ease, color 0.2s ease;
     }
 
-    /* Top-Right: Compact White Compass Dial (Interactive Mode Toggle) */
+    .map-overlay-heading:active {
+      transform: scale(0.92);
+    }
+
     .map-overlay-compass {
       position: absolute;
       top: 10px;
@@ -128,7 +140,6 @@
       transform: scale(0.92);
     }
 
-    /* Highlight ring when Heading-Up mode is active */
     .map-overlay-compass.active-heading-up {
       border: 3px solid #007aff;
     }
@@ -157,30 +168,59 @@
       transform-origin: center center;
     }
 
-    /* Absolute Bottom Branding Overlay on Map Stage (Unbolded, Subtle Weight) */
-    .map-overlay-branding {
+    .map-overlay-interstate {
       position: absolute;
-      bottom: 8px;
-      left: 0;
-      right: 0;
+      bottom: 10px;
+      left: 10px;
       z-index: 10;
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.45);
-      font-weight: 300;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-      text-align: center;
-      pointer-events: none;
-      text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.9);
-    }
-
-    /* Directional Vehicle Arrow Styling */
-    .vehicle-marker-container {
-      width: 36px;
-      height: 36px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #444444;
+      border-radius: 8px;
+      padding: 4px 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
+      min-width: 42px;
+      min-height: 42px;
+    }
+
+    .map-overlay-route {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #444444;
+      border-radius: 8px;
+      padding: 4px 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      min-height: 42px;
+    }
+
+    .map-overlay-interstate:empty,
+    .map-overlay-route:empty {
+      display: none;
+    }
+
+    .vehicle-marker-container {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+
+    .vehicle-marker-container:active {
+      transform: scale(0.85);
     }
 
     .card-content-body {
@@ -192,7 +232,6 @@
       width: 100%;
     }
 
-    /* Location Top Card Sizing Adjustments */
     .street-value {
       font-size: 1.8rem;
       font-weight: normal;
@@ -214,23 +253,13 @@
       margin-top: 2px;
     }
 
-    /* Dynamic SVG Highway Badge Styling */
-    #highway-badge-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      min-height: 26px;
-    }
-
     .highway-shield-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 26px;
+      height: 32px;
     }
 
-    /* Streamlined Weather Styling */
     .weather-container {
       display: flex;
       flex-direction: column;
@@ -283,7 +312,6 @@
       color: #cccccc;
     }
 
-    /* Highway Speed Sign Tile Styling */
     .speed-sign-card {
       background-color: #111111;
       padding: 6px;
@@ -308,6 +336,7 @@
       align-items: center;
       justify-content: center;
       padding: 8px;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     }
 
     .speed-sign::after {
@@ -320,13 +349,20 @@
       border: 3px solid #000000;
       border-radius: 6px;
       pointer-events: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .speed-sign-title,
+    .speed-sign-value,
+    .speed-sign-unit {
+      color: #000000;
+      transition: color 0.2s ease;
     }
 
     .speed-sign-title {
       font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: 1.5px;
-      color: #000000;
       text-transform: uppercase;
       line-height: 1;
       margin-bottom: 2px;
@@ -336,7 +372,6 @@
       font-size: 4.8rem;
       font-weight: bold;
       line-height: 0.95;
-      color: #000000;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
@@ -344,19 +379,120 @@
       font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: 1px;
-      color: #000000;
       text-transform: uppercase;
       margin-top: 2px;
+    }
+
+    .speed-sign.dark-mode-sign {
+      background-color: #111111;
+      border-color: #ffffff;
+    }
+
+    .speed-sign.dark-mode-sign::after {
+      border-color: #ffffff;
+    }
+
+    .speed-sign.dark-mode-sign .speed-sign-title,
+    .speed-sign.dark-mode-sign .speed-sign-value,
+    .speed-sign.dark-mode-sign .speed-sign-unit {
+      color: #ffffff;
+    }
+
+    /* BRANDING ABOUT MODAL STYLING */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #1e1e1e;
+      border: 1px solid #444444;
+      border-radius: 16px;
+      padding: 24px;
+      width: 85%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      transform: scale(0.9);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .modal-author {
+      font-size: 1.1rem;
+      color: #007aff;
+      margin-bottom: 16px;
+    }
+
+    .modal-body {
+      font-size: 0.95rem;
+      color: #cccccc;
+      line-height: 1.4;
+      margin-bottom: 20px;
+    }
+
+    .modal-link-btn {
+      display: inline-block;
+      width: 100%;
+      padding: 12px;
+      background-color: #007aff;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      transition: background-color 0.15s ease;
+    }
+
+    .modal-link-btn:active {
+      background-color: #0056b3;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: 1px solid #555555;
+      color: #aaaaaa;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="dashboard">
-    <!-- Full-Width Top Card: Location Info Stack -->
+    <!-- Full-Width Top Card: Location Info Stack (Long-press triggers About modal) -->
     <div class="card" id="location-card">
       <div class="card-content-body">
-        <div id="highway-badge-container"></div>
         <div class="street-value" id="street-name">Locating...</div>
         <div class="sub-value-large" id="city-state">--</div>
         <div class="sub-value-large" id="county-zip">--</div>
@@ -367,10 +503,10 @@
 
     <!-- Center Row: Live Map with Overlays -->
     <div class="card" id="map-card">
-      <!-- Top-Left Overlay: Heading Text -->
-      <div class="map-overlay-heading" id="heading-text">0° N</div>
+      <!-- Top-Left Overlay: Heading Text (Click to Copy Google Maps Link) -->
+      <div class="map-overlay-heading" id="heading-text" onclick="copyLocationLink(event)">0° N</div>
 
-      <!-- Top-Right Overlay: Compact White Compass (Click to toggle Map Mode) -->
+      <!-- Top-Right Overlay: Compact White Compass -->
       <div class="map-overlay-compass active-heading-up" id="compass-btn" onclick="toggleMapMode(event)">
         <div class="compass-wrapper-overlay">
           <svg class="compass-rose-svg" viewBox="0 0 100 100">
@@ -391,8 +527,11 @@
         </div>
       </div>
 
-      <!-- Bottom-Center Overlay: Light-weight Subdued Map Branding -->
-      <div class="map-overlay-branding">NOMAD Road Trip app by: BostonyFX</div>
+      <!-- Lower-Left Overlay: Interstate Badge -->
+      <div class="map-overlay-interstate" id="interstate-badge-container"></div>
+
+      <!-- Lower-Right Overlay: Route Badge -->
+      <div class="map-overlay-route" id="route-badge-container"></div>
 
       <div id="map"></div>
     </div>
@@ -415,12 +554,27 @@
       </div>
     </div>
 
-    <!-- Bottom-Right: Speed Sign Tile (Click to Toggle MPH / KM/H) -->
+    <!-- Bottom-Right: Speed Sign Tile -->
     <div class="card speed-sign-card" id="trip-card" onclick="toggleSpeedUnit(event)">
-      <div class="speed-sign">
+      <div class="speed-sign dark-mode-sign" id="speed-sign-box">
         <div class="speed-sign-title">SPEED</div>
         <div class="speed-sign-value" id="current-speed">0</div>
         <div class="speed-sign-unit" id="speed-unit-label">MPH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT / BRANDING MODAL OVERLAY -->
+  <div class="modal-overlay" id="about-modal" onclick="closeAboutModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-title">NOMAD Road Trip</div>
+      <div class="modal-author">by BostonyFX</div>
+      <div class="modal-body">
+        Real-time telemetry, GPS tracking, and heads-up navigation dashboard.
+      </div>
+      <a href="https://www.instagram.com/tony_bostony/" target="_blank" rel="noopener noreferrer" class="modal-link-btn">Visit Website</a>
+      <div>
+        <button class="modal-close-btn" onclick="closeAboutModal()">Close</button>
       </div>
     </div>
   </div>
@@ -439,6 +593,11 @@
 
     // Map Orientation Mode State
     let isHeadingUp = true;
+
+    // Map Tile Style State (Defaults to Dark Matter)
+    let isDarkMode = true;
+    const darkStyle = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+    const lightStyle = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
     // Unit State Variables
     let rawTempF = null;
@@ -475,43 +634,110 @@
         .replace(/\bTurnpike\b/gi, 'Tpk.');
     }
 
-    function generateHighwayShieldSVG(refText) {
-      if (!refText) return '';
+    function createInterstateSVG(num) {
+      return `
+        <div class="highway-shield-badge">
+          <svg width="32" height="32" viewBox="0 0 100 100">
+            <path d="M 50,4 C 65,4 88,14 96,18 C 96,55 82,82 50,96 C 18,82 4,55 4,18 C 12,14 35,4 50,4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2" />
+            <path d="M 50,7 C 64,7 86,16 93,20 C 93,28 93,32 93,32 L 7,32 C 7,32 7,28 7,20 C 14,16 36,7 50,7 Z" fill="#cc0000" />
+            <path d="M 7,32 L 93,32 C 93,54 80,80 50,93 C 20,80 7,54 7,32 Z" fill="#0033cc" />
+            <text x="50" y="73" fill="#ffffff" font-size="${num.length > 2 ? '34' : '42'}" font-weight="900" font-family="Arial, sans-serif" text-anchor="middle">${num}</text>
+          </svg>
+        </div>
+      `;
+    }
 
-      const routes = refText.split(/[;,/]/).map(r => r.trim()).filter(Boolean);
+    function createRouteSVG(num) {
+      return `
+        <div class="highway-shield-badge">
+          <svg width="32" height="32" viewBox="0 0 100 100">
+            <rect x="4" y="4" width="92" height="92" rx="16" ry="16" fill="#ffffff" stroke="#000000" stroke-width="7" />
+            <rect x="9" y="9" width="82" height="82" rx="12" ry="12" fill="none" stroke="#ffffff" stroke-width="3" />
+            <text x="50" y="65" fill="#000000" font-size="${num.length > 2 ? '38' : '48'}" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle">${num}</text>
+          </svg>
+        </div>
+      `;
+    }
 
-      const shieldSVGs = routes.map(cleanRef => {
-        const uppercaseRef = cleanRef.toUpperCase();
+    function copyLocationLink(event) {
+      if (event) event.stopPropagation();
 
-        if (uppercaseRef.startsWith('I-') || uppercaseRef.startsWith('I ') || uppercaseRef.match(/^I\d+/)) {
-          const num = uppercaseRef.replace(/[^0-9]/g, '');
-          return `
-            <div class="highway-shield-badge">
-              <svg width="26" height="26" viewBox="0 0 100 100">
-                <path d="M 50,4 C 65,4 88,14 96,18 C 96,55 82,82 50,96 C 18,82 4,55 4,18 C 12,14 35,4 50,4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2" />
-                <path d="M 50,7 C 64,7 86,16 93,20 C 93,28 93,32 93,32 L 7,32 C 7,32 7,28 7,20 C 14,16 36,7 50,7 Z" fill="#cc0000" />
-                <path d="M 7,32 L 93,32 C 93,54 80,80 50,93 C 20,80 7,54 7,32 Z" fill="#0033cc" />
-                <text x="50" y="73" fill="#ffffff" font-size="${num.length > 2 ? '34' : '42'}" font-weight="900" font-family="Arial, sans-serif" text-anchor="middle">${num}</text>
-              </svg>
-            </div>
-          `;
-        }
+      if (lastLat === null || lastLon === null) {
+        alert("GPS location not available yet.");
+        return;
+      }
 
-        const numMatch = uppercaseRef.match(/\d+[A-Z]?/);
-        const displayNum = numMatch ? numMatch[0] : uppercaseRef;
+      const mapsUrl = `https://www.google.com/maps?q=${lastLat},${lastLon}`;
+      const headingEl = document.getElementById('heading-text');
 
-        return `
-          <div class="highway-shield-badge">
-            <svg width="26" height="26" viewBox="0 0 100 100">
-              <rect x="4" y="4" width="92" height="92" rx="16" ry="16" fill="#ffffff" stroke="#000000" stroke-width="7" />
-              <rect x="9" y="9" width="82" height="82" rx="12" ry="12" fill="none" stroke="#ffffff" stroke-width="3" />
-              <text x="50" y="65" fill="#000000" font-size="${displayNum.length > 2 ? '38' : '48'}" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle">${displayNum}</text>
-            </svg>
-          </div>
-        `;
+      navigator.clipboard.writeText(mapsUrl).then(() => {
+        const originalText = headingEl.innerText;
+        const originalColor = headingEl.style.color;
+
+        headingEl.innerText = "COPIED!";
+        headingEl.style.color = "#4cd964";
+
+        setTimeout(() => {
+          headingEl.innerText = originalText;
+          headingEl.style.color = originalColor || "#ffffff";
+        }, 1500);
+      }).catch((err) => {
+        console.error("Clipboard copy error:", err);
       });
+    }
 
-      return shieldSVGs.join('');
+    function openAboutModal() {
+      const modal = document.getElementById('about-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAboutModal(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('about-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function setupLongPress() {
+      const locationCard = document.getElementById('location-card');
+      let pressTimer;
+
+      locationCard.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      const startPress = () => {
+        pressTimer = setTimeout(() => {
+          openAboutModal();
+        }, 600);
+      };
+
+      const cancelPress = () => {
+        clearTimeout(pressTimer);
+      };
+
+      locationCard.addEventListener('touchstart', startPress, { passive: true });
+      locationCard.addEventListener('touchend', cancelPress);
+      locationCard.addEventListener('touchmove', cancelPress);
+
+      locationCard.addEventListener('mousedown', startPress);
+      locationCard.addEventListener('mouseup', cancelPress);
+      locationCard.addEventListener('mouseleave', cancelPress);
+    }
+
+    function toggleMapStyle(event) {
+      if (event) event.stopPropagation();
+      isDarkMode = !isDarkMode;
+      
+      if (map) {
+        map.setStyle(isDarkMode ? darkStyle : lightStyle);
+      }
+
+      const speedSignBox = document.getElementById('speed-sign-box');
+      if (speedSignBox) {
+        if (isDarkMode) {
+          speedSignBox.classList.add('dark-mode-sign');
+        } else {
+          speedSignBox.classList.remove('dark-mode-sign');
+        }
+      }
     }
 
     function toggleMapMode(event) {
@@ -601,7 +827,7 @@
       const icons = {
         sun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
         cloudSun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
-        cloud: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19x-9 0a7 7 0 0 1-6.5-4.5 4.5 4.5 0 0 1 1.2-8.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.5 11Z"/></svg>`,
+        cloud: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8.5a7 7 0 0 1-1.2-13.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.6 11.5Z"/></svg>`,
         rain: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
         thunder: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
         snow: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
@@ -624,11 +850,10 @@
       return weatherMap[code] || { text: "Fair", icon: icons.cloudSun };
     }
 
-    // Initialize MapLibre GL Vector Engine
     function initMap() {
       map = new maplibregl.Map({
         container: 'map',
-        style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+        style: isDarkMode ? darkStyle : lightStyle,
         center: [-71.2356, 42.3765],
         zoom: 17,
         bearing: 0,
@@ -636,10 +861,10 @@
         attributionControl: false
       });
 
-      // Pointing Vehicle Marker
       const el = document.createElement('div');
       el.className = 'vehicle-marker-container';
       el.id = 'vehicle-arrow-icon';
+      el.onclick = toggleMapStyle;
       el.innerHTML = `
         <svg width="36" height="36" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));">
           <polygon points="12 2 19 21 12 17 5 21 12 2"/>
@@ -689,12 +914,41 @@
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
 
-          const refNumber = addr.ref || (road.match(/(?:I-|I\s|US-|Route\s|State Hwy\s)(\d+[A-Z]?)/i) ? road : null);
-          const badgeContainer = document.getElementById('highway-badge-container');
-          if (refNumber) {
-            badgeContainer.innerHTML = generateHighwayShieldSVG(refNumber);
+          const rawRef = addr.ref || '';
+          const searchTarget = `${rawRef} ${road}`;
+
+          let interstateNum = null;
+          let routeNum = null;
+
+          const interstateMatch = searchTarget.match(/(?:I-?|Interstate\s?)(\d{1,3})\b/i);
+          if (interstateMatch) {
+            interstateNum = interstateMatch[1];
+          }
+
+          if (rawRef) {
+            const refMatch = rawRef.match(/\d+[A-Z]?/i);
+            if (refMatch && refMatch[0] !== interstateNum) {
+              routeNum = refMatch[0];
+            }
           } else {
-            badgeContainer.innerHTML = '';
+            const routeMatch = road.match(/(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?)(\d+[A-Z]?)\b/i);
+            if (routeMatch && routeMatch[1] !== interstateNum) {
+              routeNum = routeMatch[1];
+            }
+          }
+
+          const interstateContainer = document.getElementById('interstate-badge-container');
+          if (interstateNum) {
+            interstateContainer.innerHTML = createInterstateSVG(interstateNum);
+          } else {
+            interstateContainer.innerHTML = '';
+          }
+
+          const routeContainer = document.getElementById('route-badge-container');
+          if (routeNum) {
+            routeContainer.innerHTML = createRouteSVG(routeNum);
+          } else {
+            routeContainer.innerHTML = '';
           }
         }
       } catch (err) {
@@ -764,11 +1018,23 @@
         if (isHeadingUp) {
           if (marker) marker.setOffset([0, 50]);
           if (vehicleSvg) vehicleSvg.style.transform = 'rotate(0deg)';
-          if (map) map.jumpTo({ bearing: heading });
+          if (map) {
+            map.easeTo({
+              bearing: heading,
+              duration: 1000,
+              easing: (t) => t
+            });
+          }
         } else {
           if (marker) marker.setOffset([0, 0]);
           if (vehicleSvg) vehicleSvg.style.transform = `rotate(${heading}deg)`;
-          if (map) map.jumpTo({ bearing: 0 });
+          if (map) {
+            map.easeTo({
+              bearing: 0,
+              duration: 1000,
+              easing: (t) => t
+            });
+          }
         }
       }
     }
@@ -778,16 +1044,20 @@
 
       if (isHeadingUp) {
         if (marker) marker.setOffset([0, 50]);
-        map.jumpTo({
+        map.easeTo({
           center: lngLat,
-          bearing: currentHeading
+          bearing: currentHeading,
+          duration: 1000,
+          easing: (t) => t
         });
         if (vehicleSvg) vehicleSvg.style.transform = 'rotate(0deg)';
       } else {
         if (marker) marker.setOffset([0, 0]);
-        map.jumpTo({
+        map.easeTo({
           center: lngLat,
-          bearing: 0
+          bearing: 0,
+          duration: 1000,
+          easing: (t) => t
         });
         if (vehicleSvg) vehicleSvg.style.transform = `rotate(${currentHeading}deg)`;
       }
@@ -842,21 +1112,11 @@
       });
     }
 
-    // Tap Screen Anywhere to Request Native Fullscreen
-    document.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen();
-        }
-      }
-    });
-
     window.onload = () => {
       initMap();
       startTracking();
       requestWakeLock();
+      setupLongPress();
     };
   </script>
 </body>
