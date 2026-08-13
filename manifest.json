@@ -1,1 +1,9 @@
-
+{
+  "name": "NOMAD Road Trip",
+  "short_name": "NOMAD",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait"
+}
