@@ -7,13 +7,14 @@
   
   <title>Road Trip</title>
 
-  <!-- Web App Manifest for Native Standalone Setup -->
+  <!-- Web App Manifest & Mobile Display Metadata -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#000000" />
   
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Road%20Trip","short_name":"RoadTrip","start_url":".","display":"standalone","background_color":"%23000000","theme_color":"%23000000"}' />
+  <!-- Standalone Manifest File Link -->
+  <link rel="manifest" href="manifest.json" />
 
   <!-- MapLibre GL CSS -->
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
@@ -72,6 +73,34 @@
       grid-row: 1;
       grid-column: 1 / span 2;
       cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #location-card:active {
+      background-color: #2a2a2a;
+    }
+
+    /* Copy Confirmation Toast inside Location Card */
+    .copy-toast-badge {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background-color: #4cd964;
+      color: #000000;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 12px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      letter-spacing: 0.5px;
+    }
+
+    .copy-toast-badge.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Map Box Row */
@@ -94,43 +123,41 @@
     }
 
     /* MAP OVERLAYS */
+    /* Prominent Taller Heading / Degree Badge (2px Border) */
     .map-overlay-heading {
       position: absolute;
       top: 8px;
       left: 8px;
       z-index: 10;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       color: #ffffff;
-      border: 1px solid #444444;
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: clamp(0.95rem, 3.5vw, 1.2rem);
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      border: 2px solid #555555;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 70px;
-      cursor: pointer;
+      min-width: 90px;
+      min-height: 42px;
       user-select: none;
-      transition: border-color 0.2s, transform 0.15s ease, color 0.2s ease;
     }
 
-    .map-overlay-heading:active {
-      transform: scale(0.92);
-    }
-
+    /* Enlarged Compass Overlay (64px x 64px) */
     .map-overlay-compass {
       position: absolute;
       top: 8px;
       right: 8px;
       z-index: 10;
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: #ffffff;
-      border: 2px solid #cccccc;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      border: 2.5px solid #cccccc;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -144,7 +171,7 @@
     }
 
     .map-overlay-compass.active-heading-up {
-      border: 3px solid #007aff;
+      border: 3.5px solid #007aff;
     }
 
     .compass-wrapper-overlay {
@@ -210,7 +237,7 @@
       display: none;
     }
 
-    /* Top-Center Overlay: Fullscreen Toggle Button */
+    /* Top-Center Overlay: Fullscreen Toggle Button (2px Border) */
     .map-overlay-fullscreen {
       position: absolute;
       top: 8px;
@@ -218,9 +245,10 @@
       transform: translateX(-50%);
       z-index: 12;
       background: rgba(0, 0, 0, 0.85);
-      border: 1px solid #444444;
+      border: 2px solid #555555;
       border-radius: 8px;
-      padding: 5px 8px;
+      padding: 6px 10px;
+      min-height: 42px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
@@ -260,10 +288,10 @@
       min-height: 0;
     }
 
-    /* High-Visibility Location Card Typography */
+    /* High-Visibility Location Card Typography (Slimmed to Bold) */
     .street-value {
       font-size: clamp(2.2rem, 7vw, 2.8rem);
-      font-weight: 800;
+      font-weight: bold;
       line-height: 1.1;
       color: #ffffff;
       margin-bottom: 3px;
@@ -309,9 +337,10 @@
       justify-content: center;
     }
 
+    /* Temperature Number (Slimmed to Bold) */
     .weather-temp {
       font-size: clamp(3.4rem, 11vh, 4.6rem);
-      font-weight: 800;
+      font-weight: bold;
       line-height: 1;
       color: #ffffff;
       cursor: pointer;
@@ -400,9 +429,10 @@
       line-height: 1;
     }
 
+    /* Speed Sign Value (Slimmed to Bold) */
     .speed-sign-value {
       font-size: clamp(4.5rem, 13vh, 6rem);
-      font-weight: 900;
+      font-weight: bold;
       line-height: 0.9;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
@@ -522,8 +552,9 @@
 <body>
 
   <div class="dashboard">
-    <!-- Full-Width Top Card: Location Info Stack -->
-    <div class="card" id="location-card">
+    <!-- Full-Width Top Card: Location Info Stack (Tapping Copies Location) -->
+    <div class="card" id="location-card" onclick="copyLocationLink(event)">
+      <div class="copy-toast-badge" id="copy-toast">COPIED!</div>
       <div class="card-content-body">
         <div class="street-value" id="street-name">Locating...</div>
         <div class="sub-value-large" id="city-state">--</div>
@@ -536,32 +567,32 @@
     <!-- Center Row: Live Map with Overlays -->
     <div class="card" id="map-card">
       <!-- Top-Left Overlay: Heading Text -->
-      <div class="map-overlay-heading" id="heading-text" onclick="copyLocationLink(event)">0° N</div>
+      <div class="map-overlay-heading" id="heading-text">0° N</div>
 
-      <!-- Top-Center Overlay: Fullscreen Toggle Button -->
+      <!-- Top-Center Overlay: Fullscreen Toggle Button (2px Border) -->
       <div class="map-overlay-fullscreen" id="fullscreen-btn" onclick="toggleFullScreen(event)">
-        <svg id="fullscreen-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg id="fullscreen-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
         </svg>
       </div>
 
-      <!-- Top-Right Overlay: Compact White Compass -->
+      <!-- Top-Right Overlay: Scaled White Compass (64px) -->
       <div class="map-overlay-compass active-heading-up" id="compass-btn" onclick="toggleMapMode(event)">
         <div class="compass-wrapper-overlay">
           <svg class="compass-rose-svg" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="46" fill="none" stroke="#ccc" stroke-width="2" />
-            <text x="50" y="16" fill="#ff3b30" font-size="11" font-weight="bold" text-anchor="middle">N</text>
-            <text x="86" y="54" fill="#333" font-size="10" font-weight="bold" text-anchor="middle">E</text>
-            <text x="50" y="92" fill="#333" font-size="10" font-weight="bold" text-anchor="middle">S</text>
-            <text x="14" y="54" fill="#333" font-size="10" font-weight="bold" text-anchor="middle">W</text>
+            <circle cx="50" cy="50" r="46" fill="none" stroke="#ccc" stroke-width="2.5" />
+            <text x="50" y="16" fill="#ff3b30" font-size="13" font-weight="bold" text-anchor="middle">N</text>
+            <text x="86" y="54" fill="#333" font-size="12" font-weight="bold" text-anchor="middle">E</text>
+            <text x="50" y="92" fill="#333" font-size="12" font-weight="bold" text-anchor="middle">S</text>
+            <text x="14" y="54" fill="#333" font-size="12" font-weight="bold" text-anchor="middle">W</text>
           </svg>
 
           <svg class="compass-needle-svg" id="needle-svg" viewBox="0 0 100 100">
-            <polygon points="50,16 45,50 50,47" fill="#ff3b30" />
-            <polygon points="50,16 55,50 50,47" fill="#e02b20" />
-            <polygon points="50,84 45,50 50,53" fill="#666666" />
-            <polygon points="50,84 55,50 50,53" fill="#444444" />
-            <circle cx="50" cy="50" r="4" fill="#ffffff" stroke="#333333" stroke-width="1.5" />
+            <polygon points="50,14 44,50 50,47" fill="#ff3b30" />
+            <polygon points="50,14 56,50 50,47" fill="#e02b20" />
+            <polygon points="50,86 44,50 50,53" fill="#666666" />
+            <polygon points="50,86 56,50 50,53" fill="#444444" />
+            <circle cx="50" cy="50" r="4.5" fill="#ffffff" stroke="#333333" stroke-width="2" />
           </svg>
         </div>
       </div>
@@ -725,6 +756,20 @@
       }
     }
 
+    /* Auto Fullscreen on First Screen Tap */
+    function setupFirstTapFullscreen() {
+      const enableAutoFullscreen = () => {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          toggleFullScreen();
+        }
+        document.removeEventListener('touchstart', enableAutoFullscreen);
+        document.removeEventListener('click', enableAutoFullscreen);
+      };
+
+      document.addEventListener('touchstart', enableAutoFullscreen, { once: true });
+      document.addEventListener('click', enableAutoFullscreen, { once: true });
+    }
+
     document.addEventListener('fullscreenchange', () => {
       const icon = document.getElementById('fullscreen-icon');
       if (!document.fullscreenElement && icon) {
@@ -741,19 +786,15 @@
       }
 
       const mapsUrl = `https://www.google.com/maps?q=${lastLat},${lastLon}`;
-      const headingEl = document.getElementById('heading-text');
+      const toastEl = document.getElementById('copy-toast');
 
       navigator.clipboard.writeText(mapsUrl).then(() => {
-        const originalText = headingEl.innerText;
-        const originalColor = headingEl.style.color;
-
-        headingEl.innerText = "COPIED!";
-        headingEl.style.color = "#4cd964";
-
-        setTimeout(() => {
-          headingEl.innerText = originalText;
-          headingEl.style.color = originalColor || "#ffffff";
-        }, 1500);
+        if (toastEl) {
+          toastEl.classList.add('show');
+          setTimeout(() => {
+            toastEl.classList.remove('show');
+          }, 1800);
+        }
       }).catch((err) => {
         console.error("Clipboard copy error:", err);
       });
@@ -928,7 +969,7 @@
         container: 'map',
         style: isDarkMode ? darkStyle : lightStyle,
         center: [-71.2356, 42.3765],
-        zoom: 17,
+        zoom: 16,
         bearing: 0,
         pitch: 0,
         attributionControl: false
@@ -947,7 +988,7 @@
       marker = new maplibregl.Marker({ 
         element: el, 
         rotationAlignment: 'viewport',
-        offset: [0, 50]
+        offset: [0, 0]
       })
         .setLngLat([-71.2356, 42.3765])
         .addTo(map);
@@ -955,6 +996,11 @@
 
     function getCardinalDirection(angle) {
       const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+      return directions[Math.round(angle / 45) % 8];
+    }
+
+    function getFullCardinalDirection(angle) {
+      const directions = ['North', 'Northeast', 'East', 'Southeast', 'South', 'Southwest', 'West', 'Northwest'];
       return directions[Math.round(angle / 45) % 8];
     }
 
@@ -972,13 +1018,38 @@
         if (data && data.address) {
           const addr = data.address;
           
-          // Sanitizer: Split semicolon-separated building ranges ("542;544;546" -> "542")
           let cleanHouseNum = addr.house_number ? addr.house_number.split(';')[0].trim() : '';
           const houseNum = cleanHouseNum ? `${cleanHouseNum} ` : '';
           
-          const road = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
-          
-          const fullStreetAddress = abbreviateStreetName(`${houseNum}${road}`);
+          const rawRoad = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
+          const searchTarget = [addr.ref, rawRoad, addr.highway, addr.official_name].filter(Boolean).join(' ');
+
+          let displayRoadName = rawRoad;
+
+          // 1. Detect Interstate (e.g. "I 95", "I-95", "Interstate 95") -> Force "I-95"
+          const interstateMatch = searchTarget.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
+          if (interstateMatch) {
+            displayRoadName = `I-${interstateMatch[1]}`;
+          } else {
+            // 2. Detect US or State Route (e.g. "Route 3", "Rt 3", or ref "3") -> Force "Rt. X"
+            const routeMatch = searchTarget.match(/(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?)(\d+[A-Z]?)\b/i);
+            if (routeMatch) {
+              displayRoadName = `Rt. ${routeMatch[1]}`;
+            } else if (addr.ref && /^\d+[A-Z]?$/i.test(addr.ref.trim())) {
+              displayRoadName = `Rt. ${addr.ref.trim()}`;
+            }
+          }
+
+          // Append direction for Interstates / Routes (e.g. "I-95 North" or "Rt. 2 East")
+          const isHighwayType = interstateMatch || displayRoadName.startsWith('Rt.');
+          if (isHighwayType && currentHeading !== null && !isNaN(currentHeading)) {
+            const headingDir = getFullCardinalDirection(currentHeading);
+            displayRoadName = `${displayRoadName} ${headingDir}`;
+          }
+
+          const fullStreetAddress = isHighwayType 
+            ? displayRoadName 
+            : abbreviateStreetName(`${houseNum}${displayRoadName}`);
 
           const city = addr.city || addr.town || addr.village || "";
           const stateFull = addr.state || "";
@@ -991,33 +1062,18 @@
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
 
-          // Search target using only road/highway fields (excluding full display_name to avoid house number matches)
-          const searchTarget = [
-            addr.ref,
-            addr.road,
-            addr.highway,
-            addr.official_name
-          ].filter(Boolean).join(' ');
-
-          let interstateNum = null;
+          // Map Overlay Badges
+          let interstateNum = interstateMatch ? interstateMatch[1] : null;
           let routeNum = null;
 
-          // Catch Interstate patterns (e.g., I-95, Interstate 95, I95)
-          const interstateMatch = searchTarget.match(/(?:I-?|Interstate\s?)(\d{1,3})\b/i);
-          if (interstateMatch) {
-            interstateNum = interstateMatch[1];
-          }
-
-          // Catch State/US Route patterns specifically requiring Route/Rt/US/Hwy prefixes or ref badges
-          if (addr.ref) {
-            const refMatch = addr.ref.match(/\d+[A-Z]?/i);
-            if (refMatch && refMatch[0] !== interstateNum) {
-              routeNum = refMatch[0];
+          if (!interstateNum) {
+            if (addr.ref) {
+              const refMatch = addr.ref.match(/\d+[A-Z]?/i);
+              if (refMatch) routeNum = refMatch[0];
             }
-          } else {
-            const routeMatch = searchTarget.match(/(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?)(\d+[A-Z]?)\b/i);
-            if (routeMatch && routeMatch[1] !== interstateNum) {
-              routeNum = routeMatch[1];
+            if (!routeNum) {
+              const rMatch = searchTarget.match(/(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?)(\d+[A-Z]?)\b/i);
+              if (rMatch) routeNum = rMatch[1];
             }
           }
 
@@ -1103,7 +1159,7 @@
       const vehicleSvg = document.querySelector('#vehicle-arrow-icon svg');
 
       if (isHeadingUp) {
-        if (marker) marker.setOffset([0, 50]);
+        if (marker) marker.setOffset([0, 0]);
         map.easeTo({
           center: lngLat,
           bearing: currentHeading,
@@ -1177,6 +1233,7 @@
       startTracking();
       requestWakeLock();
       setupLongPress();
+      setupFirstTapFullscreen();
     };
   </script>
 </body>
