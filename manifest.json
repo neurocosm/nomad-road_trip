@@ -1,7 +1,9 @@
 {
+  "id": "nomad-road-trip",
   "name": "NOMAD Road Trip",
   "short_name": "NOMAD",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen"],
   "background_color": "#000000",
