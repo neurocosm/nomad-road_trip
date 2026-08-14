@@ -74,6 +74,7 @@
       grid-column: 1 / span 2;
       cursor: pointer;
       transition: background-color 0.2s ease;
+      padding: 4px 8px;
     }
 
     #location-card:active {
@@ -123,7 +124,7 @@
     }
 
     /* MAP OVERLAYS */
-    /* Prominent Taller Heading / Degree Badge (2px Border) */
+    /* Interactive Telemetry Overlay Badge (Top-Left) */
     .map-overlay-heading {
       position: absolute;
       top: 8px;
@@ -134,16 +135,23 @@
       border: 2px solid #555555;
       padding: 6px 14px;
       border-radius: 10px;
-      font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+      font-size: clamp(1.1rem, 4vw, 1.4rem);
       font-weight: bold;
       letter-spacing: 0.5px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 90px;
+      min-width: 95px;
       min-height: 42px;
+      cursor: pointer;
       user-select: none;
+      transition: transform 0.15s ease, border-color 0.2s;
+    }
+
+    .map-overlay-heading:active {
+      transform: scale(0.92);
+      border-color: #007aff;
     }
 
     /* Enlarged Compass Overlay (64px x 64px) */
@@ -288,28 +296,30 @@
       min-height: 0;
     }
 
-    /* High-Visibility Location Card Typography (Slimmed to Bold) */
+    /* High-Visibility Location Card Typography (Bumped Baseline Size) */
     .street-value {
       font-size: clamp(2.2rem, 7vw, 2.8rem);
       font-weight: bold;
       line-height: 1.1;
       color: #ffffff;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      max-width: 100%;
     }
 
     .sub-value-large {
-      font-size: clamp(1.4rem, 4.5vw, 1.75rem);
+      font-size: clamp(1.2rem, 3.8vw, 1.5rem);
       color: #eeeeee;
       font-weight: 600;
-      line-height: 1.2;
+      line-height: 1.15;
       margin-top: 1px;
     }
 
     .sub-value-meta {
-      font-size: clamp(1.15rem, 3.8vw, 1.4rem);
+      font-size: clamp(1rem, 3.2vw, 1.25rem);
       font-weight: 600;
-      line-height: 1.2;
-      margin-top: 2px;
+      line-height: 1.15;
+      margin-top: 1px;
     }
 
     .highway-shield-badge {
@@ -324,7 +334,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 2px;
       width: 100%;
       height: 100%;
       min-height: 0;
@@ -337,11 +347,11 @@
       justify-content: center;
     }
 
-    /* Temperature Number (Slimmed to Bold) */
+    /* Temperature Number (Option B Compact Scaling) */
     .weather-temp {
-      font-size: clamp(3.4rem, 11vh, 4.6rem);
+      font-size: clamp(2.4rem, 8vh, 3.4rem);
       font-weight: bold;
-      line-height: 1;
+      line-height: 0.95;
       color: #ffffff;
       cursor: pointer;
       user-select: none;
@@ -356,22 +366,24 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+      gap: 6px;
+      font-size: clamp(1.15rem, 3.6vw, 1.4rem);
       font-weight: 700;
-      margin-top: 4px;
+      margin-top: 2px;
       color: #ffffff;
+      text-align: center;
+      line-height: 1.1;
     }
 
     .weather-details-stacked {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      font-size: clamp(1.25rem, 4vw, 1.5rem);
+      font-size: clamp(1.05rem, 3.2vw, 1.25rem);
       font-weight: 600;
       color: #dddddd;
+      margin-top: 2px;
+      white-space: nowrap;
     }
 
     .speed-sign-card {
@@ -422,23 +434,23 @@
     }
 
     .speed-sign-title {
-      font-size: clamp(1rem, 3.2vw, 1.3rem);
+      font-size: clamp(0.9rem, 2.8vw, 1.2rem);
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
       line-height: 1;
     }
 
-    /* Speed Sign Value (Slimmed to Bold) */
+    /* Speed Sign Value */
     .speed-sign-value {
-      font-size: clamp(4.5rem, 13vh, 6rem);
+      font-size: clamp(3.8rem, 11vh, 5.2rem);
       font-weight: bold;
       line-height: 0.9;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
     .speed-sign-unit {
-      font-size: clamp(1rem, 3.2vw, 1.3rem);
+      font-size: clamp(0.9rem, 2.8vw, 1.2rem);
       font-weight: 900;
       letter-spacing: 1.5px;
       text-transform: uppercase;
@@ -566,8 +578,8 @@
 
     <!-- Center Row: Live Map with Overlays -->
     <div class="card" id="map-card">
-      <!-- Top-Left Overlay: Heading Text -->
-      <div class="map-overlay-heading" id="heading-text">0° N</div>
+      <!-- Top-Left Overlay: Telemetry Multi-Badge (Tapping cycles Heading -> Altitude -> Accuracy) -->
+      <div class="map-overlay-heading" id="heading-text" onclick="toggleTelemetryMode(event)">0° N</div>
 
       <!-- Top-Center Overlay: Fullscreen Toggle Button (2px Border) -->
       <div class="map-overlay-fullscreen" id="fullscreen-btn" onclick="toggleFullScreen(event)">
@@ -617,8 +629,9 @@
             </div>
           </div>
           <div class="weather-details-stacked" id="weather-extra">
-            <div>Hum: <strong style="color: #ffffff; font-weight: normal;" id="humidity-val">--%</strong></div>
-            <div>UV: <strong style="color: #ffffff; font-weight: normal;" id="uv-val">--</strong></div>
+            <span>Hum: <strong style="color: #ffffff; font-weight: normal;" id="humidity-val">--%</strong></span>
+            <span style="color: #888888; margin: 0 6px;">•</span>
+            <span>UV: <strong style="color: #ffffff; font-weight: normal;" id="uv-val">--</strong></span>
           </div>
         </div>
       </div>
@@ -634,7 +647,7 @@
     </div>
   </div>
 
-  <!-- ABOUT / BRANDING MODAL OVERLAY -->
+  <!-- BRANDING ABOUT MODAL OVERLAY -->
   <div class="modal-overlay" id="about-modal" onclick="closeAboutModal(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
       <div class="modal-title">NOMAD Road Trip</div>
@@ -657,9 +670,14 @@
     let map, marker;
     let currentHeading = 0;
     let lastLat = null, lastLon = null;
+    let rawAltitudeMeters = null;
+    let rawAccuracyMeters = null;
     let lastWeatherFetchTime = 0;
     let lastGeocodeTime = 0;
     let wakeLock = null;
+
+    // Telemetry Badge Mode State (0 = Heading, 1 = Live GPS Altitude, 2 = GPS Accuracy)
+    let telemetryMode = 0;
 
     // Map Orientation Mode State
     let isHeadingUp = true;
@@ -704,6 +722,28 @@
         .replace(/\bTurnpike\b/gi, 'Tpk.');
     }
 
+    /* Precise Auto-Shrinker for Street Name Tile */
+    function autoShrinkStreetName() {
+      const el = document.getElementById('street-name');
+      if (!el) return;
+
+      // Reset font size so normal names re-expand to full clamp size
+      el.style.fontSize = '';
+
+      const text = el.innerText || '';
+
+      // Only apply custom scaling if street name is exceptionally long (22+ chars)
+      if (text.length > 22) {
+        let currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+        const minSize = 18; 
+
+        while (el.scrollWidth > el.clientWidth && currentSize > minSize) {
+          currentSize -= 1;
+          el.style.fontSize = `${currentSize}px`;
+        }
+      }
+    }
+
     function createInterstateSVG(num) {
       return `
         <div class="highway-shield-badge">
@@ -727,6 +767,40 @@
           </svg>
         </div>
       `;
+    }
+
+    /* TELEMETRY BADGE FUNCTIONS */
+    function toggleTelemetryMode(event) {
+      if (event) event.stopPropagation();
+      telemetryMode = (telemetryMode + 1) % 3;
+      renderTelemetryBadge();
+    }
+
+    function renderTelemetryBadge() {
+      const badgeEl = document.getElementById('heading-text');
+      if (!badgeEl) return;
+
+      if (telemetryMode === 0) {
+        // Heading Mode
+        const cardinal = getCardinalDirection(currentHeading);
+        badgeEl.innerText = `${Math.round(currentHeading)}° ${cardinal}`;
+      } else if (telemetryMode === 1) {
+        // Live GPS Altitude Mode
+        if (rawAltitudeMeters !== null && !isNaN(rawAltitudeMeters)) {
+          const feet = Math.round(rawAltitudeMeters * 3.28084);
+          badgeEl.innerText = `Alt: ${feet.toLocaleString()} ft`;
+        } else {
+          badgeEl.innerText = `Alt: -- ft`;
+        }
+      } else if (telemetryMode === 2) {
+        // Live GPS Signal Accuracy Mode
+        if (rawAccuracyMeters !== null && !isNaN(rawAccuracyMeters)) {
+          const accFeet = Math.round(rawAccuracyMeters * 3.28084);
+          badgeEl.innerText = `GPS: ±${accFeet} ft`;
+        } else {
+          badgeEl.innerText = `GPS: ±-- ft`;
+        }
+      }
     }
 
     function toggleFullScreen(event) {
@@ -939,12 +1013,12 @@
 
     function getWeatherInfo(code) {
       const icons = {
-        sun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
-        cloudSun: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
-        cloud: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8.5a7 7 0 0 1-1.2-13.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.6 11.5Z"/></svg>`,
-        rain: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
-        thunder: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-        snow: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
+        sun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+        cloudSun: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.94 11.23a5 5 0 0 0-8.92 2.12 3.5 3.5 0 0 0 .98 6.65h8a4 4 0 0 0 .94-7.77z" stroke="#a0a0a0"/></svg>`,
+        cloud: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a0a0a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H8.5a7 7 0 0 1-1.2-13.8 8 8 0 0 1 14.8 2.3 4.5 4.5 0 0 1-.6 11.5Z"/></svg>`,
+        rain: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" stroke="#a0a0a0"/></svg>`,
+        thunder: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+        snow: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>`
       };
 
       const weatherMap = {
@@ -1022,32 +1096,38 @@
           const houseNum = cleanHouseNum ? `${cleanHouseNum} ` : '';
           
           const rawRoad = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
-          const searchTarget = [addr.ref, rawRoad, addr.highway, addr.official_name].filter(Boolean).join(' ');
+          // Search target excludes display_name to prevent house numbers (e.g., 107) from being parsed as routes
+          const addressSearchTarget = [addr.ref, rawRoad, addr.highway, addr.official_name].filter(Boolean).join(' ');
 
           let displayRoadName = rawRoad;
 
-          // 1. Detect Interstate (e.g. "I 95", "I-95", "Interstate 95") -> Force "I-95"
-          const interstateMatch = searchTarget.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
-          if (interstateMatch) {
-            displayRoadName = `I-${interstateMatch[1]}`;
+          // 1. Local Alias Overrides (e.g., Yankee Division Highway -> I-95)
+          if (/Yankee Division (Hwy|Highway)/i.test(rawRoad) || /Yankee Division/i.test(rawRoad)) {
+            displayRoadName = "I-95";
           } else {
-            // 2. Detect US or State Route (e.g. "Route 3", "Rt 3", or ref "3") -> Force "Rt. X"
-            const routeMatch = searchTarget.match(/(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?)(\d+[A-Z]?)\b/i);
-            if (routeMatch) {
-              displayRoadName = `Rt. ${routeMatch[1]}`;
-            } else if (addr.ref && /^\d+[A-Z]?$/i.test(addr.ref.trim())) {
-              displayRoadName = `Rt. ${addr.ref.trim()}`;
+            // 2. Detect Interstate (e.g., "I 95", "I-95", "Interstate 95") -> Force "I-95"
+            const interstateMatch = addressSearchTarget.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
+            if (interstateMatch) {
+              displayRoadName = `I-${interstateMatch[1]}`;
+            } else {
+              // 3. Detect US or State Route explicitly (requires "Route", "Rt", "US-", or "State Hwy")
+              const routeMatch = addressSearchTarget.match(/\b(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?|State Route\s?)(\d+[A-Z]?)\b/i);
+              if (routeMatch) {
+                displayRoadName = `Rt. ${routeMatch[1]}`;
+              } else if (addr.ref && /^(I-\d+|Rt\.\s?\d+|\d+[A-Z]?)$/i.test(addr.ref.trim()) && !cleanHouseNum) {
+                displayRoadName = `Rt. ${addr.ref.trim()}`;
+              }
             }
           }
 
-          // Append direction for Interstates / Routes (e.g. "I-95 North" or "Rt. 2 East")
-          const isHighwayType = interstateMatch || displayRoadName.startsWith('Rt.');
-          if (isHighwayType && currentHeading !== null && !isNaN(currentHeading)) {
+          // 4. Universal Direction Appending for Highways, Routes, Parkways, Expressways
+          const isHighwayOrParkway = /\b(I-\d+|Rt\.\s?\d+|Hwy|Highway|Pkwy|Parkway|Expressway|Tpk|Turnpike)\b/i.test(displayRoadName);
+          if (isHighwayOrParkway && currentHeading !== null && !isNaN(currentHeading)) {
             const headingDir = getFullCardinalDirection(currentHeading);
             displayRoadName = `${displayRoadName} ${headingDir}`;
           }
 
-          const fullStreetAddress = isHighwayType 
+          const fullStreetAddress = (displayRoadName.startsWith('I-') || displayRoadName.startsWith('Rt.'))
             ? displayRoadName 
             : abbreviateStreetName(`${houseNum}${displayRoadName}`);
 
@@ -1059,21 +1139,22 @@
           const stateCode = stateAbbreviations[stateFull] || stateFull;
 
           document.getElementById('street-name').innerText = fullStreetAddress;
+          autoShrinkStreetName(); // Trigger Auto-Shrinker for long street names
+
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
 
-          // Map Overlay Badges
-          let interstateNum = interstateMatch ? interstateMatch[1] : null;
+          // 5. DIRECT BADGE EXTRACTION
+          let interstateNum = null;
           let routeNum = null;
 
-          if (!interstateNum) {
-            if (addr.ref) {
-              const refMatch = addr.ref.match(/\d+[A-Z]?/i);
-              if (refMatch) routeNum = refMatch[0];
-            }
-            if (!routeNum) {
-              const rMatch = searchTarget.match(/(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?)(\d+[A-Z]?)\b/i);
-              if (rMatch) routeNum = rMatch[1];
+          const iMatch = fullStreetAddress.match(/\bI-(\d{1,3})\b/i);
+          if (iMatch) {
+            interstateNum = iMatch[1];
+          } else {
+            const rMatch = fullStreetAddress.match(/\bRt\.\s?(\d+[A-Z]?)\b/i);
+            if (rMatch) {
+              routeNum = rMatch[1];
             }
           }
 
@@ -1145,8 +1226,12 @@
     function updateHeading(heading) {
       if (heading !== null && !isNaN(heading)) {
         currentHeading = heading;
-        const cardinal = getCardinalDirection(heading);
-        document.getElementById('heading-text').innerText = `${Math.round(heading)}° ${cardinal}`;
+        renderTelemetryBadge();
+
+        // Re-orient map and vehicle arrow dynamically on heading updates
+        if (lastLat !== null && lastLon !== null) {
+          updateMapCamera([lastLon, lastLat]);
+        }
         
         const needleEl = document.getElementById('needle-svg');
         if (needleEl) {
@@ -1183,7 +1268,7 @@
       if ("geolocation" in navigator) {
         navigator.geolocation.watchPosition(
           (position) => {
-            const { latitude, longitude, heading, speed } = position.coords;
+            const { latitude, longitude, heading, speed, altitude, accuracy } = position.coords;
 
             const lngLat = [longitude, latitude];
             marker.setLngLat(lngLat);
@@ -1192,10 +1277,16 @@
               currentHeading = heading;
             }
 
+            // Save Altitude and Accuracy telemetry
+            rawAltitudeMeters = altitude;
+            rawAccuracyMeters = accuracy;
+
             updateMapCamera(lngLat);
 
             if (heading !== null && !isNaN(heading)) {
               updateHeading(heading);
+            } else {
+              renderTelemetryBadge();
             }
 
             rawSpeedMps = speed;
