@@ -74,7 +74,7 @@
       grid-column: 1 / span 2;
       cursor: pointer;
       transition: background-color 0.2s ease;
-      padding: 4px 8px;
+      padding: 4px 10px;
     }
 
     #location-card:active {
@@ -270,20 +270,41 @@
       transform: translateX(-50%) scale(0.92);
     }
 
-    .vehicle-marker-container {
-      width: 38px;
-      height: 38px;
+    /* INDEPENDENT OVERLAY VEHICLE MARKER */
+    .vehicle-overlay-marker {
+      position: absolute;
+      left: 50%;
+      z-index: 8;
+      width: 44px;
+      height: 44px;
+      margin-left: -22px;
+      margin-top: -22px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       pointer-events: auto;
       user-select: none;
-      transition: transform 0.10s ease;
+      transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.12s ease;
     }
 
-    .vehicle-marker-container:active {
+    .vehicle-overlay-marker:active {
       transform: scale(0.85);
+    }
+
+    .vehicle-overlay-marker.mode-heading-up {
+      top: 72%;
+    }
+
+    .vehicle-overlay-marker.mode-north-up {
+      top: 50%;
+    }
+
+    #vehicle-overlay-svg {
+      width: 38px;
+      height: 38px;
+      transform-origin: center center;
+      transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
 
     .card-content-body {
@@ -296,15 +317,15 @@
       min-height: 0;
     }
 
-    /* High-Visibility Location Card Typography (Bumped Baseline Size) */
+    /* High-Visibility Location Card Typography */
     .street-value {
-      font-size: clamp(2.2rem, 7vw, 2.8rem);
+      font-size: 2.5rem;
       font-weight: bold;
       line-height: 1.1;
       color: #ffffff;
       margin-bottom: 2px;
       white-space: nowrap;
-      max-width: 100%;
+      display: inline-block;
     }
 
     .sub-value-large {
@@ -347,7 +368,7 @@
       justify-content: center;
     }
 
-    /* Temperature Number (Option B Compact Scaling) */
+    /* Temperature Number with Separation Margin */
     .weather-temp {
       font-size: clamp(2.4rem, 8vh, 3.4rem);
       font-weight: bold;
@@ -355,11 +376,14 @@
       color: #ffffff;
       cursor: pointer;
       user-select: none;
-      transition: opacity 0.15s ease;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      touch-action: manipulation;
+      margin-bottom: 6px;
     }
 
     .weather-temp:active {
-      opacity: 0.6;
+      transform: scale(0.94);
+      opacity: 0.7;
     }
 
     .weather-desc-container {
@@ -369,21 +393,29 @@
       gap: 6px;
       font-size: clamp(1.15rem, 3.6vw, 1.4rem);
       font-weight: 700;
-      margin-top: 2px;
       color: #ffffff;
       text-align: center;
       line-height: 1.1;
+      margin-bottom: 4px;
     }
 
+    /* Weather Details Row with Integrated SVG Badges */
     .weather-details-stacked {
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 14px;
       font-size: clamp(1.05rem, 3.2vw, 1.25rem);
-      font-weight: 600;
-      color: #dddddd;
-      margin-top: 2px;
+      font-weight: 700;
+      color: #ffffff;
       white-space: nowrap;
+    }
+
+    .weather-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
     }
 
     .speed-sign-card {
@@ -471,7 +503,7 @@
       color: #ffffff;
     }
 
-    /* BRANDING ABOUT MODAL STYLING */
+    /* MODAL OVERLAYS */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -499,8 +531,8 @@
       background: #1e1e1e;
       border: 1px solid #444444;
       border-radius: 16px;
-      padding: 24px;
-      width: 85%;
+      padding: 22px 20px;
+      width: 88%;
       max-width: 360px;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
@@ -513,23 +545,23 @@
     }
 
     .modal-title {
-      font-size: 1.6rem;
+      font-size: 1.45rem;
       font-weight: bold;
       color: #ffffff;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .modal-author {
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: #007aff;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .modal-body {
       font-size: 0.95rem;
       color: #cccccc;
       line-height: 1.4;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .modal-link-btn {
@@ -554,10 +586,52 @@
       background: transparent;
       border: 1px solid #555555;
       color: #aaaaaa;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 8px;
       font-size: 0.9rem;
       cursor: pointer;
+    }
+
+    /* Weather Config Pill Groups with Green Active Highlight */
+    .config-section-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #888888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+      margin: 10px 0 6px 4px;
+    }
+
+    .config-pill-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .config-pill-btn {
+      background: #2a2a2a;
+      border: 1.5px solid #444444;
+      color: #cccccc;
+      border-radius: 8px;
+      padding: 8px 2px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
+    }
+
+    .config-pill-btn:active {
+      transform: scale(0.92);
+    }
+
+    .config-pill-btn.active {
+      background: rgba(76, 217, 100, 0.18);
+      border-color: #4cd964;
+      color: #4cd964 !important;
+      font-weight: 900;
+      box-shadow: 0 0 8px rgba(76, 217, 100, 0.35);
     }
   </style>
 </head>
@@ -603,7 +677,7 @@
             <polygon points="50,14 44,50 50,47" fill="#ff3b30" />
             <polygon points="50,14 56,50 50,47" fill="#e02b20" />
             <polygon points="50,86 44,50 50,53" fill="#666666" />
-            <polygon points="50,86 56,50 50,53" fill="#444444" />
+            <polygon points="50,86 56,50 50,44" fill="#444444" />
             <circle cx="50" cy="50" r="4.5" fill="#ffffff" stroke="#333333" stroke-width="2" />
           </svg>
         </div>
@@ -615,23 +689,44 @@
       <!-- Lower-Right Overlay: Route Badge -->
       <div class="map-overlay-route" id="route-badge-container"></div>
 
+      <!-- Dedicated Independent Vehicle Overlay Marker (Tapping cycles Dark Matter -> Positron -> Voyager) -->
+      <div class="vehicle-overlay-marker mode-heading-up" id="vehicle-overlay" onclick="toggleMapStyle(event)">
+        <svg id="vehicle-overlay-svg" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.6));">
+          <polygon points="12 2 19 21 12 17 5 21 12 2"/>
+        </svg>
+      </div>
+
       <div id="map"></div>
     </div>
 
-    <!-- Bottom-Left: Weather -->
+    <!-- Bottom-Left: Weather (Short Tap: °F/°C | Hold 500ms: Refresh Interval & Distance Matrix) -->
     <div class="card" id="weather-card">
       <div class="card-content-body">
         <div class="weather-container">
           <div class="weather-main">
-            <div class="weather-temp" id="current-temp" onclick="toggleTemperatureUnit(event)">--°F</div>
+            <div class="weather-temp" id="current-temp">--°F</div>
             <div id="weather-desc">
               <div class="weather-desc-container">Fetching weather...</div>
             </div>
           </div>
+          <!-- Clean Icon Badges Row -->
           <div class="weather-details-stacked" id="weather-extra">
-            <span>Hum: <strong style="color: #ffffff; font-weight: normal;" id="humidity-val">--%</strong></span>
-            <span style="color: #888888; margin: 0 6px;">•</span>
-            <span>UV: <strong style="color: #ffffff; font-weight: normal;" id="uv-val">--</strong></span>
+            <div class="weather-stat-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+              <span id="humidity-val">--%</span>
+            </div>
+
+            <div class="weather-stat-pill">
+              <span id="uv-icon-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4cd964" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span id="uv-val">--</span>
+            </div>
           </div>
         </div>
       </div>
@@ -662,19 +757,56 @@
     </div>
   </div>
 
+  <!-- WEATHER REFRESH CONFIG MODAL OVERLAY -->
+  <div class="modal-overlay" id="weather-modal" onclick="closeWeatherModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-title">Weather Updates</div>
+      <div class="modal-body" style="margin-bottom: 12px;">
+        Select how frequently weather refreshes during your drive.
+      </div>
+
+      <div class="config-section-label">Time Interval</div>
+      <div class="config-pill-grid" id="time-pill-grid">
+        <button class="config-pill-btn" onclick="setWeatherTimeInterval(10)">10m</button>
+        <button class="config-pill-btn" onclick="setWeatherTimeInterval(20)">20m</button>
+        <button class="config-pill-btn" onclick="setWeatherTimeInterval(30)">30m</button>
+        <button class="config-pill-btn" onclick="setWeatherTimeInterval(60)">60m</button>
+      </div>
+
+      <div class="config-section-label">Distance Trigger</div>
+      <div class="config-pill-grid" id="distance-pill-grid">
+        <button class="config-pill-btn" onclick="setWeatherDistanceInterval(15)">15mi</button>
+        <button class="config-pill-btn" onclick="setWeatherDistanceInterval(30)">30mi</button>
+        <button class="config-pill-btn" onclick="setWeatherDistanceInterval(50)">50mi</button>
+        <button class="config-pill-btn" onclick="setWeatherDistanceInterval(0)">Off</button>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <button class="modal-close-btn" onclick="closeWeatherModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MapLibre GL JS -->
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
   <script>
     // App State Variables
-    let map, marker;
+    let map;
     let currentHeading = 0;
     let lastLat = null, lastLon = null;
+    let lastGeocodedLat = null, lastGeocodedLon = null;
+    let hasInitialGeocode = false;
     let rawAltitudeMeters = null;
     let rawAccuracyMeters = null;
     let lastWeatherFetchTime = 0;
+    let lastWeatherLat = null, lastWeatherLon = null;
     let lastGeocodeTime = 0;
     let wakeLock = null;
+
+    // Weather Config State (Stored in localStorage)
+    let weatherTimeIntervalMinutes = parseInt(localStorage.getItem('nomad_weather_interval_min') || '30', 10);
+    let weatherDistanceIntervalMiles = parseInt(localStorage.getItem('nomad_weather_distance_mi') || '15', 10);
 
     // Telemetry Badge Mode State (0 = Heading, 1 = Live GPS Altitude, 2 = GPS Accuracy)
     let telemetryMode = 0;
@@ -682,10 +814,25 @@
     // Map Orientation Mode State
     let isHeadingUp = true;
 
-    // Map Tile Style State (Defaults to Dark Matter)
-    let isDarkMode = true;
-    const darkStyle = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
-    const lightStyle = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
+    // 3-Theme Palette Configuration
+    const mapThemes = [
+      {
+        name: 'Dark Matter',
+        url: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+        darkSign: true
+      },
+      {
+        name: 'Positron (High-Contrast Neutral)',
+        url: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+        darkSign: false
+      },
+      {
+        name: 'Voyager (Daylight)',
+        url: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+        darkSign: false
+      }
+    ];
+    let currentThemeIndex = 0;
 
     // Unit State Variables
     let rawTempF = null;
@@ -722,27 +869,38 @@
         .replace(/\bTurnpike\b/gi, 'Tpk.');
     }
 
-    /* Precise Auto-Shrinker for Street Name Tile */
+    /* Haversine Distance Helper in Meters */
+    function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    /* Robust Pixel-Based Auto-Shrinker Engine */
     function autoShrinkStreetName() {
       const el = document.getElementById('street-name');
-      if (!el) return;
+      const card = document.getElementById('location-card');
+      if (!el || !card) return;
 
-      // Reset font size so normal names re-expand to full clamp size
-      el.style.fontSize = '';
+      const maxAllowedWidth = card.clientWidth - 24;
+      let fontSize = 40;
+      el.style.fontSize = `${fontSize}px`;
 
-      const text = el.innerText || '';
+      const minFontSize = 22;
 
-      // Only apply custom scaling if street name is exceptionally long (22+ chars)
-      if (text.length > 22) {
-        let currentSize = parseFloat(window.getComputedStyle(el).fontSize);
-        const minSize = 18; 
-
-        while (el.scrollWidth > el.clientWidth && currentSize > minSize) {
-          currentSize -= 1;
-          el.style.fontSize = `${currentSize}px`;
-        }
+      while (el.scrollWidth > maxAllowedWidth && fontSize > minFontSize) {
+        fontSize -= 1;
+        el.style.fontSize = `${fontSize}px`;
       }
     }
+
+    window.addEventListener('resize', autoShrinkStreetName);
 
     function createInterstateSVG(num) {
       return `
@@ -769,6 +927,39 @@
       `;
     }
 
+    /* Directional Snapping Engine */
+    function getHighwayDirection(routeNumber, heading) {
+      if (heading === null || isNaN(heading)) return '';
+
+      const cleanNum = routeNumber.toUpperCase().trim();
+
+      const axisOverrides = {
+        "128": "NS",
+        "225": "EW",
+        "2":   "EW",
+        "2A":  "EW",
+        "4":   "NS",
+        "3":   "NS",
+        "3A":  "NS",
+        "95":  "NS",
+        "93":  "NS",
+        "495": "NS",
+        "90":  "EW"
+      };
+
+      let axis = axisOverrides[cleanNum];
+      if (!axis) {
+        const numericPart = parseInt(cleanNum.replace(/\D/g, ''), 10);
+        axis = (numericPart % 2 !== 0) ? 'NS' : 'EW';
+      }
+
+      if (axis === 'NS') {
+        return (heading >= 270 || heading < 90) ? 'North' : 'South';
+      } else {
+        return (heading >= 0 && heading < 180) ? 'East' : 'West';
+      }
+    }
+
     /* TELEMETRY BADGE FUNCTIONS */
     function toggleTelemetryMode(event) {
       if (event) event.stopPropagation();
@@ -781,11 +972,9 @@
       if (!badgeEl) return;
 
       if (telemetryMode === 0) {
-        // Heading Mode
         const cardinal = getCardinalDirection(currentHeading);
         badgeEl.innerText = `${Math.round(currentHeading)}° ${cardinal}`;
       } else if (telemetryMode === 1) {
-        // Live GPS Altitude Mode
         if (rawAltitudeMeters !== null && !isNaN(rawAltitudeMeters)) {
           const feet = Math.round(rawAltitudeMeters * 3.28084);
           badgeEl.innerText = `Alt: ${feet.toLocaleString()} ft`;
@@ -793,7 +982,6 @@
           badgeEl.innerText = `Alt: -- ft`;
         }
       } else if (telemetryMode === 2) {
-        // Live GPS Signal Accuracy Mode
         if (rawAccuracyMeters !== null && !isNaN(rawAccuracyMeters)) {
           const accFeet = Math.round(rawAccuracyMeters * 3.28084);
           badgeEl.innerText = `GPS: ±${accFeet} ft`;
@@ -830,7 +1018,6 @@
       }
     }
 
-    /* Auto Fullscreen on First Screen Tap */
     function setupFirstTapFullscreen() {
       const enableAutoFullscreen = () => {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -874,6 +1061,7 @@
       });
     }
 
+    /* ABOUT MODAL */
     function openAboutModal() {
       const modal = document.getElementById('about-modal');
       if (modal) modal.classList.add('active');
@@ -885,42 +1073,134 @@
       if (modal) modal.classList.remove('active');
     }
 
-    function setupLongPress() {
+    /* WEATHER INTERVAL CONFIG MODAL */
+    function renderWeatherModalPills() {
+      const modal = document.getElementById('weather-modal');
+      if (!modal) return;
+
+      const timeBtns = modal.querySelectorAll('#time-pill-grid .config-pill-btn');
+      timeBtns.forEach(btn => {
+        const val = parseInt(btn.innerText, 10);
+        btn.classList.toggle('active', val === weatherTimeIntervalMinutes);
+      });
+
+      const distBtns = modal.querySelectorAll('#distance-pill-grid .config-pill-btn');
+      distBtns.forEach(btn => {
+        const val = btn.innerText === 'Off' ? 0 : parseInt(btn.innerText, 10);
+        btn.classList.toggle('active', val === weatherDistanceIntervalMiles);
+      });
+    }
+
+    function openWeatherModal() {
+      renderWeatherModalPills();
+      const modal = document.getElementById('weather-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeWeatherModal(event) {
+      if (event) event.stopPropagation();
+      const modal = document.getElementById('weather-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function setWeatherTimeInterval(minutes) {
+      weatherTimeIntervalMinutes = minutes;
+      localStorage.setItem('nomad_weather_interval_min', minutes);
+      renderWeatherModalPills();
+    }
+
+    function setWeatherDistanceInterval(miles) {
+      weatherDistanceIntervalMiles = miles;
+      localStorage.setItem('nomad_weather_distance_mi', miles);
+      renderWeatherModalPills();
+    }
+
+    /* LONG-PRESS & TAP DISAMBIGUATION HANDLERS */
+    function setupInteractions() {
       const locationCard = document.getElementById('location-card');
-      let pressTimer;
+      let locPressTimer;
 
       locationCard.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      const startPress = () => {
-        pressTimer = setTimeout(() => {
+      const startLocPress = () => {
+        locPressTimer = setTimeout(() => {
           openAboutModal();
         }, 600);
       };
 
-      const cancelPress = () => {
-        clearTimeout(pressTimer);
-      };
+      const cancelLocPress = () => clearTimeout(locPressTimer);
 
-      locationCard.addEventListener('touchstart', startPress, { passive: true });
-      locationCard.addEventListener('touchend', cancelPress);
-      locationCard.addEventListener('touchmove', cancelPress);
+      locationCard.addEventListener('touchstart', startLocPress, { passive: true });
+      locationCard.addEventListener('touchend', cancelLocPress);
+      locationCard.addEventListener('touchmove', cancelLocPress);
+      locationCard.addEventListener('mousedown', startLocPress);
+      locationCard.addEventListener('mouseup', cancelLocPress);
+      locationCard.addEventListener('mouseleave', cancelLocPress);
 
-      locationCard.addEventListener('mousedown', startPress);
-      locationCard.addEventListener('mouseup', cancelPress);
-      locationCard.addEventListener('mouseleave', cancelPress);
+      const tempTile = document.getElementById('current-temp');
+      let tempPressTimer;
+      let isTempLongPress = false;
+      let isTouchHandled = false;
+
+      tempTile.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      tempTile.addEventListener('touchstart', (e) => {
+        isTouchHandled = true;
+        isTempLongPress = false;
+        tempPressTimer = setTimeout(() => {
+          isTempLongPress = true;
+          openWeatherModal();
+        }, 500);
+      }, { passive: true });
+
+      tempTile.addEventListener('touchmove', () => {
+        clearTimeout(tempPressTimer);
+      }, { passive: true });
+
+      tempTile.addEventListener('touchend', (e) => {
+        clearTimeout(tempPressTimer);
+        if (!isTempLongPress) {
+          toggleTemperatureUnit(e);
+        }
+        setTimeout(() => { isTouchHandled = false; }, 350);
+      });
+
+      tempTile.addEventListener('mousedown', (e) => {
+        if (isTouchHandled) return;
+        isTempLongPress = false;
+        tempPressTimer = setTimeout(() => {
+          isTempLongPress = true;
+          openWeatherModal();
+        }, 500);
+      });
+
+      tempTile.addEventListener('mouseleave', () => {
+        clearTimeout(tempPressTimer);
+      });
+
+      tempTile.addEventListener('mouseup', (e) => {
+        if (isTouchHandled) return;
+        clearTimeout(tempPressTimer);
+        if (!isTempLongPress) {
+          toggleTemperatureUnit(e);
+        }
+      });
     }
 
+    /* 3-THEME CYCLING HANDLER */
     function toggleMapStyle(event) {
       if (event) event.stopPropagation();
-      isDarkMode = !isDarkMode;
-      
+
+      currentThemeIndex = (currentThemeIndex + 1) % mapThemes.length;
+      const theme = mapThemes[currentThemeIndex];
+
       if (map) {
-        map.setStyle(isDarkMode ? darkStyle : lightStyle);
+        map.setStyle(theme.url);
       }
 
       const speedSignBox = document.getElementById('speed-sign-box');
       if (speedSignBox) {
-        if (isDarkMode) {
+        if (theme.darkSign) {
           speedSignBox.classList.add('dark-mode-sign');
         } else {
           speedSignBox.classList.remove('dark-mode-sign');
@@ -933,10 +1213,20 @@
       isHeadingUp = !isHeadingUp;
 
       const compassBtn = document.getElementById('compass-btn');
+      const vehicleOverlay = document.getElementById('vehicle-overlay');
+
       if (isHeadingUp) {
         compassBtn.classList.add('active-heading-up');
+        if (vehicleOverlay) {
+          vehicleOverlay.classList.remove('mode-north-up');
+          vehicleOverlay.classList.add('mode-heading-up');
+        }
       } else {
         compassBtn.classList.remove('active-heading-up');
+        if (vehicleOverlay) {
+          vehicleOverlay.classList.remove('mode-heading-up');
+          vehicleOverlay.classList.add('mode-north-up');
+        }
       }
 
       if (lastLat !== null && lastLon !== null) {
@@ -998,7 +1288,6 @@
       try {
         if ('wakeLock' in navigator) {
           wakeLock = await navigator.wakeLock.request('screen');
-          console.log('Screen Wake Lock active');
         }
       } catch (err) {
         console.error(`Wake Lock error: ${err.name}, ${err.message}`);
@@ -1041,31 +1330,13 @@
     function initMap() {
       map = new maplibregl.Map({
         container: 'map',
-        style: isDarkMode ? darkStyle : lightStyle,
+        style: mapThemes[currentThemeIndex].url,
         center: [-71.2356, 42.3765],
         zoom: 16,
         bearing: 0,
         pitch: 0,
         attributionControl: false
       });
-
-      const el = document.createElement('div');
-      el.className = 'vehicle-marker-container';
-      el.id = 'vehicle-arrow-icon';
-      el.onclick = toggleMapStyle;
-      el.innerHTML = `
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));">
-          <polygon points="12 2 19 21 12 17 5 21 12 2"/>
-        </svg>
-      `;
-
-      marker = new maplibregl.Marker({ 
-        element: el, 
-        rotationAlignment: 'viewport',
-        offset: [0, 0]
-      })
-        .setLngLat([-71.2356, 42.3765])
-        .addTo(map);
     }
 
     function getCardinalDirection(angle) {
@@ -1078,11 +1349,29 @@
       return directions[Math.round(angle / 45) % 8];
     }
 
-    async function fetchLocationDetails(lat, lon) {
+    async function fetchLocationDetails(lat, lon, speed) {
       document.getElementById('lat-lon').innerText = `Lat: ${lat.toFixed(5)} | Lon: ${lon.toFixed(5)}`;
 
       const now = Date.now();
-      if (now - lastGeocodeTime < 15000) return;
+
+      // STATIONARY GPS JITTER & DISTANCE GATE
+      if (hasInitialGeocode) {
+        if (speed !== null && !isNaN(speed) && speed < 0.7) {
+          return;
+        }
+
+        if (now - lastGeocodeTime < 10000) {
+          return;
+        }
+
+        if (lastGeocodedLat !== null && lastGeocodedLon !== null) {
+          const distanceMoved = getDistanceFromLatLonInMeters(lastGeocodedLat, lastGeocodedLon, lat, lon);
+          if (distanceMoved < 30) {
+            return;
+          }
+        }
+      }
+
       lastGeocodeTime = now;
 
       try {
@@ -1090,41 +1379,75 @@
         const data = await response.json();
         
         if (data && data.address) {
+          lastGeocodedLat = lat;
+          lastGeocodedLon = lon;
+          hasInitialGeocode = true;
+
           const addr = data.address;
           
           let cleanHouseNum = addr.house_number ? addr.house_number.split(';')[0].trim() : '';
           const houseNum = cleanHouseNum ? `${cleanHouseNum} ` : '';
           
           const rawRoad = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
-          // Search target excludes display_name to prevent house numbers (e.g., 107) from being parsed as routes
           const addressSearchTarget = [addr.ref, rawRoad, addr.highway, addr.official_name].filter(Boolean).join(' ');
 
-          let displayRoadName = rawRoad;
+          // --- DUAL INDEPENDENT BADGE EXTRACTION ---
+          let interstateNum = null;
+          let routeNum = null;
 
-          // 1. Local Alias Overrides (e.g., Yankee Division Highway -> I-95)
-          if (/Yankee Division (Hwy|Highway)/i.test(rawRoad) || /Yankee Division/i.test(rawRoad)) {
-            displayRoadName = "I-95";
-          } else {
-            // 2. Detect Interstate (e.g., "I 95", "I-95", "Interstate 95") -> Force "I-95"
-            const interstateMatch = addressSearchTarget.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
-            if (interstateMatch) {
-              displayRoadName = `I-${interstateMatch[1]}`;
-            } else {
-              // 3. Detect US or State Route explicitly (requires "Route", "Rt", "US-", or "State Hwy")
-              const routeMatch = addressSearchTarget.match(/\b(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?|State Route\s?)(\d+[A-Z]?)\b/i);
-              if (routeMatch) {
-                displayRoadName = `Rt. ${routeMatch[1]}`;
-              } else if (addr.ref && /^(I-\d+|Rt\.\s?\d+|\d+[A-Z]?)$/i.test(addr.ref.trim()) && !cleanHouseNum) {
-                displayRoadName = `Rt. ${addr.ref.trim()}`;
-              }
-            }
+          // Check 1: Interstate
+          const interstateMatch = addressSearchTarget.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
+          if (interstateMatch) {
+            interstateNum = interstateMatch[1];
           }
 
-          // 4. Universal Direction Appending for Highways, Routes, Parkways, Expressways
-          const isHighwayOrParkway = /\b(I-\d+|Rt\.\s?\d+|Hwy|Highway|Pkwy|Parkway|Expressway|Tpk|Turnpike)\b/i.test(displayRoadName);
-          if (isHighwayOrParkway && currentHeading !== null && !isNaN(currentHeading)) {
-            const headingDir = getFullCardinalDirection(currentHeading);
-            displayRoadName = `${displayRoadName} ${headingDir}`;
+          // Check 2: State / Numbered Route (runs independently)
+          const routeMatch = addressSearchTarget.match(/\b(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?|State Route\s?)(\d+[A-Z]?)\b/i);
+          if (routeMatch) {
+            routeNum = routeMatch[1];
+          } else if (addr.ref && /^(Rt\.\s?\d+|\d+[A-Z]?)$/i.test(addr.ref.trim()) && !cleanHouseNum) {
+            routeNum = addr.ref.trim().replace(/^Rt\.\s?/i, '');
+          }
+
+          // Render Interstate Badge (Bottom-Left)
+          const interstateContainer = document.getElementById('interstate-badge-container');
+          if (interstateNum) {
+            interstateContainer.innerHTML = createInterstateSVG(interstateNum);
+          } else {
+            interstateContainer.innerHTML = '';
+          }
+
+          // Render Route Badge (Bottom-Right)
+          const routeContainer = document.getElementById('route-badge-container');
+          if (routeNum) {
+            routeContainer.innerHTML = createRouteSVG(routeNum);
+          } else {
+            routeContainer.innerHTML = '';
+          }
+
+          // --- ROAD NAME & DIRECTIONAL SNAPPING ---
+          let displayRoadName = rawRoad;
+          let matchedNumber = null;
+
+          if (/Yankee Division (Hwy|Highway)/i.test(rawRoad) || /Yankee Division/i.test(rawRoad)) {
+            displayRoadName = "I-95";
+            matchedNumber = "95";
+          } else if (interstateNum) {
+            displayRoadName = `I-${interstateNum}`;
+            matchedNumber = interstateNum;
+          } else if (routeNum) {
+            displayRoadName = `Rt. ${routeNum}`;
+            matchedNumber = routeNum;
+          }
+
+          if (matchedNumber && currentHeading !== null && !isNaN(currentHeading)) {
+            const snappedDirection = getHighwayDirection(matchedNumber, currentHeading);
+            displayRoadName = `${displayRoadName} ${snappedDirection}`;
+          } else {
+            const isHighwayOrParkway = /\b(Hwy|Highway|Pkwy|Parkway|Expressway|Tpk|Turnpike)\b/i.test(displayRoadName);
+            if (isHighwayOrParkway && currentHeading !== null && !isNaN(currentHeading)) {
+              displayRoadName = `${displayRoadName} ${getFullCardinalDirection(currentHeading)}`;
+            }
           }
 
           const fullStreetAddress = (displayRoadName.startsWith('I-') || displayRoadName.startsWith('Rt.'))
@@ -1139,38 +1462,10 @@
           const stateCode = stateAbbreviations[stateFull] || stateFull;
 
           document.getElementById('street-name').innerText = fullStreetAddress;
-          autoShrinkStreetName(); // Trigger Auto-Shrinker for long street names
+          autoShrinkStreetName();
 
           document.getElementById('city-state').innerText = `${city}${city && stateCode ? ', ' : ''}${stateCode}`;
           document.getElementById('county-zip').innerText = `${county} ${postcode}`.trim();
-
-          // 5. DIRECT BADGE EXTRACTION
-          let interstateNum = null;
-          let routeNum = null;
-
-          const iMatch = fullStreetAddress.match(/\bI-(\d{1,3})\b/i);
-          if (iMatch) {
-            interstateNum = iMatch[1];
-          } else {
-            const rMatch = fullStreetAddress.match(/\bRt\.\s?(\d+[A-Z]?)\b/i);
-            if (rMatch) {
-              routeNum = rMatch[1];
-            }
-          }
-
-          const interstateContainer = document.getElementById('interstate-badge-container');
-          if (interstateNum) {
-            interstateContainer.innerHTML = createInterstateSVG(interstateNum);
-          } else {
-            interstateContainer.innerHTML = '';
-          }
-
-          const routeContainer = document.getElementById('route-badge-container');
-          if (routeNum) {
-            routeContainer.innerHTML = createRouteSVG(routeNum);
-          } else {
-            routeContainer.innerHTML = '';
-          }
         }
       } catch (err) {
         console.error("Reverse geocoding error:", err);
@@ -1179,8 +1474,35 @@
 
     async function fetchWeatherAndElevation(lat, lon) {
       const now = Date.now();
-      if (now - lastWeatherFetchTime < 600000 && lastWeatherFetchTime !== 0) return;
+      const timeThresholdMs = weatherTimeIntervalMinutes * 60 * 1000;
+
+      let shouldFetch = false;
+
+      // Initial fetch check
+      if (lastWeatherFetchTime === 0) {
+        shouldFetch = true;
+      } else {
+        // Trigger 1: Time Interval Check
+        const timePassed = now - lastWeatherFetchTime;
+        if (timePassed >= timeThresholdMs) {
+          shouldFetch = true;
+        }
+
+        // Trigger 2: Distance Matrix Check (if enabled > 0)
+        if (!shouldFetch && weatherDistanceIntervalMiles > 0 && lastWeatherLat !== null && lastWeatherLon !== null) {
+          const metersMoved = getDistanceFromLatLonInMeters(lastWeatherLat, lastWeatherLon, lat, lon);
+          const milesMoved = metersMoved * 0.000621371;
+          if (milesMoved >= weatherDistanceIntervalMiles) {
+            shouldFetch = true;
+          }
+        }
+      }
+
+      if (!shouldFetch) return;
+
       lastWeatherFetchTime = now;
+      lastWeatherLat = lat;
+      lastWeatherLon = lon;
 
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,uv_index&temperature_unit=fahrenheit&timezone=auto`;
@@ -1214,7 +1536,14 @@
             else if (uv >= 6 && uv < 8) uvColor = '#ff9500';
             else if (uv >= 8) uvColor = '#ff3b30';
 
-            document.getElementById('uv-val').innerHTML = `<span style="color: ${uvColor}; font-weight: normal;">${uv}</span>`;
+            // Dynamic color-reactive UV Sun SVG
+            document.getElementById('uv-icon-wrap').innerHTML = `
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${uvColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+            `;
+            document.getElementById('uv-val').innerHTML = `<span style="color: ${uvColor};">${uv}</span>`;
           }
         }
 
@@ -1228,7 +1557,15 @@
         currentHeading = heading;
         renderTelemetryBadge();
 
-        // Re-orient map and vehicle arrow dynamically on heading updates
+        const vehicleSvg = document.getElementById('vehicle-overlay-svg');
+        if (vehicleSvg) {
+          if (isHeadingUp) {
+            vehicleSvg.style.transform = 'rotate(0deg)';
+          } else {
+            vehicleSvg.style.transform = `rotate(${heading}deg)`;
+          }
+        }
+
         if (lastLat !== null && lastLon !== null) {
           updateMapCamera([lastLon, lastLat]);
         }
@@ -1241,22 +1578,29 @@
     }
 
     function updateMapCamera(lngLat) {
-      const vehicleSvg = document.querySelector('#vehicle-arrow-icon svg');
+      if (!map) return;
+
+      const mapContainer = document.getElementById('map-card');
+      const containerHeight = mapContainer ? mapContainer.clientHeight : 300;
+
+      const verticalOffset = isHeadingUp ? -(containerHeight * 0.22) : 0;
+
+      const vehicleSvg = document.getElementById('vehicle-overlay-svg');
 
       if (isHeadingUp) {
-        if (marker) marker.setOffset([0, 0]);
         map.easeTo({
           center: lngLat,
           bearing: currentHeading,
+          offset: [0, verticalOffset],
           duration: 300,
           easing: (t) => t
         });
         if (vehicleSvg) vehicleSvg.style.transform = 'rotate(0deg)';
       } else {
-        if (marker) marker.setOffset([0, 0]);
         map.easeTo({
           center: lngLat,
           bearing: 0,
+          offset: [0, 0],
           duration: 300,
           easing: (t) => t
         });
@@ -1271,15 +1615,16 @@
             const { latitude, longitude, heading, speed, altitude, accuracy } = position.coords;
 
             const lngLat = [longitude, latitude];
-            marker.setLngLat(lngLat);
 
             if (heading !== null && !isNaN(heading)) {
               currentHeading = heading;
             }
 
-            // Save Altitude and Accuracy telemetry
             rawAltitudeMeters = altitude;
             rawAccuracyMeters = accuracy;
+
+            lastLat = latitude;
+            lastLon = longitude;
 
             updateMapCamera(lngLat);
 
@@ -1292,10 +1637,7 @@
             rawSpeedMps = speed;
             renderSpeed();
 
-            lastLat = latitude;
-            lastLon = longitude;
-
-            fetchLocationDetails(latitude, longitude);
+            fetchLocationDetails(latitude, longitude, speed);
             fetchWeatherAndElevation(latitude, longitude);
           },
           (error) => {
@@ -1323,7 +1665,7 @@
       initMap();
       startTracking();
       requestWakeLock();
-      setupLongPress();
+      setupInteractions();
       setupFirstTapFullscreen();
     };
   </script>
