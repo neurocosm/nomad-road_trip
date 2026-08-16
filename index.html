@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
   
-  <title>NOMAD: Road Trip</title>
+  <title>Road Trip</title>
 
   <!-- Web App Manifest & Mobile Display Metadata -->
   <meta name="mobile-web-app-capable" content="yes" />
@@ -56,7 +56,7 @@
       background-color: #1e1e1e;
       border-radius: 12px;
       border: 1px solid #333333;
-      padding: 6px 8px;
+      padding: 4px 8px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -74,7 +74,7 @@
       grid-column: 1 / span 2;
       cursor: pointer;
       transition: background-color 0.2s ease;
-      padding: 4px 10px;
+      padding: 2px 8px;
     }
 
     #location-card:active {
@@ -245,7 +245,7 @@
       display: none;
     }
 
-    /* Top-Center Overlay: Fullscreen Toggle Button (2px Border) */
+    /* Top-Center Overlay: Fullscreen Toggle Button */
     .map-overlay-fullscreen {
       position: absolute;
       top: 8px;
@@ -319,28 +319,28 @@
 
     /* High-Visibility Location Card Typography */
     .street-value {
-      font-size: 2.5rem;
+      font-size: 2.7rem;
       font-weight: bold;
-      line-height: 1.1;
+      line-height: 1.05;
       color: #ffffff;
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       white-space: nowrap;
       display: inline-block;
     }
 
     .sub-value-large {
-      font-size: clamp(1.2rem, 3.8vw, 1.5rem);
+      font-size: clamp(1.45rem, 4.6vw, 1.85rem);
       color: #eeeeee;
-      font-weight: 600;
-      line-height: 1.15;
-      margin-top: 1px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-top: 2px;
     }
 
     .sub-value-meta {
-      font-size: clamp(1rem, 3.2vw, 1.25rem);
+      font-size: clamp(1.2rem, 3.8vw, 1.45rem);
       font-weight: 600;
-      line-height: 1.15;
-      margin-top: 1px;
+      line-height: 1.2;
+      margin-top: 2px;
     }
 
     .highway-shield-badge {
@@ -368,7 +368,7 @@
       justify-content: center;
     }
 
-    /* Temperature Number with Separation Margin */
+    /* Temperature Number with Spacing */
     .weather-temp {
       font-size: clamp(2.4rem, 8vh, 3.4rem);
       font-weight: bold;
@@ -544,17 +544,44 @@
       transform: scale(1);
     }
 
+    /* Hyperlinked Modal Title & Guide Subtext */
+    .modal-title-link {
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 4px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .modal-title-link:active {
+      transform: scale(0.96);
+      opacity: 0.85;
+    }
+
     .modal-title {
       font-size: 1.45rem;
-      font-weight: bold;
+      font-weight: 900;
       color: #ffffff;
-      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .modal-features-hint {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #4cd964;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 1px;
     }
 
     .modal-author {
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: #007aff;
+      margin-top: 4px;
       margin-bottom: 12px;
+      font-weight: 600;
     }
 
     .modal-body {
@@ -592,7 +619,7 @@
       cursor: pointer;
     }
 
-    /* Weather Config Pill Groups with Green Active Highlight */
+    /* Weather Config Pill Groups */
     .config-section-label {
       font-size: 0.85rem;
       font-weight: 700;
@@ -638,7 +665,7 @@
 <body>
 
   <div class="dashboard">
-    <!-- Full-Width Top Card: Location Info Stack (Tapping Copies Location) -->
+    <!-- Full-Width Top Card: Location Info Stack -->
     <div class="card" id="location-card" onclick="copyLocationLink(event)">
       <div class="copy-toast-badge" id="copy-toast">COPIED!</div>
       <div class="card-content-body">
@@ -652,17 +679,17 @@
 
     <!-- Center Row: Live Map with Overlays -->
     <div class="card" id="map-card">
-      <!-- Top-Left Overlay: Telemetry Multi-Badge (Tapping cycles Heading -> Altitude -> Accuracy) -->
+      <!-- Top-Left Overlay: Telemetry Multi-Badge -->
       <div class="map-overlay-heading" id="heading-text" onclick="toggleTelemetryMode(event)">0° N</div>
 
-      <!-- Top-Center Overlay: Fullscreen Toggle Button (2px Border) -->
+      <!-- Top-Center Overlay: Fullscreen Toggle Button -->
       <div class="map-overlay-fullscreen" id="fullscreen-btn" onclick="toggleFullScreen(event)">
         <svg id="fullscreen-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
         </svg>
       </div>
 
-      <!-- Top-Right Overlay: Scaled White Compass (64px) -->
+      <!-- Top-Right Overlay: Scaled White Compass -->
       <div class="map-overlay-compass active-heading-up" id="compass-btn" onclick="toggleMapMode(event)">
         <div class="compass-wrapper-overlay">
           <svg class="compass-rose-svg" viewBox="0 0 100 100">
@@ -689,7 +716,7 @@
       <!-- Lower-Right Overlay: Route Badge -->
       <div class="map-overlay-route" id="route-badge-container"></div>
 
-      <!-- Dedicated Independent Vehicle Overlay Marker (Tapping cycles Dark Matter -> Positron -> Voyager) -->
+      <!-- Dedicated Independent Vehicle Overlay Marker (Toggles Dark <-> Light) -->
       <div class="vehicle-overlay-marker mode-heading-up" id="vehicle-overlay" onclick="toggleMapStyle(event)">
         <svg id="vehicle-overlay-svg" viewBox="0 0 24 24" fill="#007aff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.6));">
           <polygon points="12 2 19 21 12 17 5 21 12 2"/>
@@ -699,7 +726,7 @@
       <div id="map"></div>
     </div>
 
-    <!-- Bottom-Left: Weather (Short Tap: °F/°C | Hold 500ms: Refresh Interval & Distance Matrix) -->
+    <!-- Bottom-Left: Weather -->
     <div class="card" id="weather-card">
       <div class="card-content-body">
         <div class="weather-container">
@@ -742,10 +769,13 @@
     </div>
   </div>
 
-  <!-- BRANDING ABOUT MODAL OVERLAY -->
+  <!-- BRANDING ABOUT MODAL OVERLAY (With Direct Features Guide Link) -->
   <div class="modal-overlay" id="about-modal" onclick="closeAboutModal(event)">
     <div class="modal-box" onclick="event.stopPropagation()">
-      <div class="modal-title">NOMAD Road Trip</div>
+      <a href="features.html" class="modal-title-link" title="View Features & Guide">
+        <div class="modal-title">NOMAD Road Trip ↗</div>
+        <div class="modal-features-hint">Features &amp; User Guide</div>
+      </a>
       <div class="modal-author">by BostonyFX</div>
       <div class="modal-body">
         Real-time telemetry, GPS tracking, and heads-up navigation dashboard.
@@ -814,21 +844,16 @@
     // Map Orientation Mode State
     let isHeadingUp = true;
 
-    // 3-Theme Palette Configuration
+    // 2-Theme Dedicated Palette (Dark Matter <-> Positron Neutral)
     const mapThemes = [
       {
-        name: 'Dark Matter',
+        name: 'Dark Matter (Night)',
         url: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
         darkSign: true
       },
       {
-        name: 'Positron (High-Contrast Neutral)',
+        name: 'Positron (Neutral Light)',
         url: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-        darkSign: false
-      },
-      {
-        name: 'Voyager (Daylight)',
-        url: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
         darkSign: false
       }
     ];
@@ -888,8 +913,8 @@
       const card = document.getElementById('location-card');
       if (!el || !card) return;
 
-      const maxAllowedWidth = card.clientWidth - 24;
-      let fontSize = 40;
+      const maxAllowedWidth = card.clientWidth - 16;
+      let fontSize = 42;
       el.style.fontSize = `${fontSize}px`;
 
       const minFontSize = 22;
@@ -1016,6 +1041,7 @@
           icon.innerHTML = '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />';
         }
       }
+      requestWakeLock();
     }
 
     function setupFirstTapFullscreen() {
@@ -1036,6 +1062,7 @@
       if (!document.fullscreenElement && icon) {
         icon.innerHTML = '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />';
       }
+      requestWakeLock();
     });
 
     function copyLocationLink(event) {
@@ -1187,7 +1214,7 @@
       });
     }
 
-    /* 3-THEME CYCLING HANDLER */
+    /* 2-THEME CYCLING HANDLER */
     function toggleMapStyle(event) {
       if (event) event.stopPropagation();
 
@@ -1284,21 +1311,25 @@
       }
     }
 
+    /* SCREEN WAKE LOCK HEARTBEAT */
     async function requestWakeLock() {
       try {
-        if ('wakeLock' in navigator) {
+        if (document.visibilityState === 'visible' && 'wakeLock' in navigator && (wakeLock === null || wakeLock.released)) {
           wakeLock = await navigator.wakeLock.request('screen');
         }
       } catch (err) {
-        console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+        // Quietly handle permission denials or non-active contexts
       }
     }
 
-    document.addEventListener('visibilitychange', async () => {
-      if (wakeLock !== null && document.visibilityState === 'visible') {
-        await requestWakeLock();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        requestWakeLock();
       }
     });
+    window.addEventListener('focus', requestWakeLock);
+    window.addEventListener('touchstart', requestWakeLock, { passive: true });
+    setInterval(requestWakeLock, 15000);
 
     function getWeatherInfo(code) {
       const icons = {
@@ -1354,7 +1385,7 @@
 
       const now = Date.now();
 
-      // STATIONARY GPS JITTER & DISTANCE GATE
+      // Stationary GPS Jitter & Distance Gate
       if (hasInitialGeocode) {
         if (speed !== null && !isNaN(speed) && speed < 0.7) {
           return;
@@ -1384,32 +1415,43 @@
           hasInitialGeocode = true;
 
           const addr = data.address;
-          
-          let cleanHouseNum = addr.house_number ? addr.house_number.split(';')[0].trim() : '';
-          const houseNum = cleanHouseNum ? `${cleanHouseNum} ` : '';
-          
           const rawRoad = addr.road || addr.pedestrian || addr.suburb || "Unnamed Road";
-          const addressSearchTarget = [addr.ref, rawRoad, addr.highway, addr.official_name].filter(Boolean).join(' ');
+          const rawRef = addr.ref || "";
+          const rawHwy = addr.highway || "";
+          const combinedSearch = [rawRoad, rawRef, rawHwy, addr.official_name, addr.name].filter(Boolean).join(' ');
 
-          // --- DUAL INDEPENDENT BADGE EXTRACTION ---
+          // --- 1. DUAL HIGHWAY & SHIELD IDENTIFICATION ---
           let interstateNum = null;
           let routeNum = null;
 
-          // Check 1: Interstate
-          const interstateMatch = addressSearchTarget.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
-          if (interstateMatch) {
-            interstateNum = interstateMatch[1];
+          // Check known Massachusetts aliases first
+          if (/Yankee Division/i.test(combinedSearch)) {
+            interstateNum = "95";
+            routeNum = "128";
+          } else if (/Massachusetts Turnpike|Mass Pike/i.test(combinedSearch)) {
+            interstateNum = "90";
+          } else if (/Pilgrim Highway|Southeast Expressway/i.test(combinedSearch)) {
+            interstateNum = "93";
+            routeNum = "3";
           }
 
-          // Check 2: State / Numbered Route (runs independently)
-          const routeMatch = addressSearchTarget.match(/\b(?:US-?|Route\s?|Rt\.?\s?|[A-Z]{2}-?\s?|State Hwy\s?|State Route\s?)(\d+[A-Z]?)\b/i);
-          if (routeMatch) {
-            routeNum = routeMatch[1];
-          } else if (addr.ref && /^(Rt\.\s?\d+|\d+[A-Z]?)$/i.test(addr.ref.trim()) && !cleanHouseNum) {
-            routeNum = addr.ref.trim().replace(/^Rt\.\s?/i, '');
+          // Regex matching for Interstates (I-95, I 93, Interstate 495)
+          if (!interstateNum) {
+            const iMatch = combinedSearch.match(/\b(?:I-?|Interstate\s+)(\d{1,3})\b/i);
+            if (iMatch) interstateNum = iMatch[1];
           }
 
-          // Render Interstate Badge (Bottom-Left)
+          // Regex matching for Routes (US 3, MA 225, Route 2, Rt 2A)
+          if (!routeNum) {
+            const rMatch = combinedSearch.match(/\b(?:US-?|Route\s?|Rt\.?\s?|MA-?|State Hwy\s?|State Route\s?)(\d+[A-Z]?)\b/i);
+            if (rMatch) {
+              routeNum = rMatch[1];
+            } else if (rawRef && /^(Rt\.\s?\d+|\d+[A-Z]?)$/i.test(rawRef.trim())) {
+              routeNum = rawRef.trim().replace(/^Rt\.\s?/i, '');
+            }
+          }
+
+          // Render Lower-Left Interstate Badge
           const interstateContainer = document.getElementById('interstate-badge-container');
           if (interstateNum) {
             interstateContainer.innerHTML = createInterstateSVG(interstateNum);
@@ -1417,7 +1459,7 @@
             interstateContainer.innerHTML = '';
           }
 
-          // Render Route Badge (Bottom-Right)
+          // Render Lower-Right Route Badge
           const routeContainer = document.getElementById('route-badge-container');
           if (routeNum) {
             routeContainer.innerHTML = createRouteSVG(routeNum);
@@ -1425,14 +1467,11 @@
             routeContainer.innerHTML = '';
           }
 
-          // --- ROAD NAME & DIRECTIONAL SNAPPING ---
+          // --- 2. STREET NAME FORMATTING & GHOST NUMBER SANITIZATION ---
           let displayRoadName = rawRoad;
           let matchedNumber = null;
 
-          if (/Yankee Division (Hwy|Highway)/i.test(rawRoad) || /Yankee Division/i.test(rawRoad)) {
-            displayRoadName = "I-95";
-            matchedNumber = "95";
-          } else if (interstateNum) {
+          if (interstateNum) {
             displayRoadName = `I-${interstateNum}`;
             matchedNumber = interstateNum;
           } else if (routeNum) {
@@ -1440,6 +1479,7 @@
             matchedNumber = routeNum;
           }
 
+          // Directional Snapping
           if (matchedNumber && currentHeading !== null && !isNaN(currentHeading)) {
             const snappedDirection = getHighwayDirection(matchedNumber, currentHeading);
             displayRoadName = `${displayRoadName} ${snappedDirection}`;
@@ -1450,9 +1490,19 @@
             }
           }
 
-          const fullStreetAddress = (displayRoadName.startsWith('I-') || displayRoadName.startsWith('Rt.'))
-            ? displayRoadName 
-            : abbreviateStreetName(`${houseNum}${displayRoadName}`);
+          // Strip ghost house numbers on all highways/interstates/routes
+          const isDesignatedHighway = interstateNum !== null || routeNum !== null ||
+            /^(I-\d+|Rt\.?\s?\d+|US-\d+|State Hwy|Route\s\d+|Massachusetts Turnpike|Mass Pike)/i.test(displayRoadName) ||
+            /\b(Highway|Hwy|Turnpike|Tpk|Expressway|Parkway|Pkwy)\b/i.test(displayRoadName);
+
+          let fullStreetAddress = '';
+          if (isDesignatedHighway) {
+            fullStreetAddress = displayRoadName;
+          } else {
+            let cleanHouseNum = addr.house_number ? addr.house_number.split(';')[0].trim() : '';
+            const housePrefix = cleanHouseNum ? `${cleanHouseNum} ` : '';
+            fullStreetAddress = abbreviateStreetName(`${housePrefix}${displayRoadName}`);
+          }
 
           const city = addr.city || addr.town || addr.village || "";
           const stateFull = addr.state || "";
@@ -1482,13 +1532,11 @@
       if (lastWeatherFetchTime === 0) {
         shouldFetch = true;
       } else {
-        // Trigger 1: Time Interval Check
         const timePassed = now - lastWeatherFetchTime;
         if (timePassed >= timeThresholdMs) {
           shouldFetch = true;
         }
 
-        // Trigger 2: Distance Matrix Check (if enabled > 0)
         if (!shouldFetch && weatherDistanceIntervalMiles > 0 && lastWeatherLat !== null && lastWeatherLon !== null) {
           const metersMoved = getDistanceFromLatLonInMeters(lastWeatherLat, lastWeatherLon, lat, lon);
           const milesMoved = metersMoved * 0.000621371;
@@ -1536,7 +1584,6 @@
             else if (uv >= 6 && uv < 8) uvColor = '#ff9500';
             else if (uv >= 8) uvColor = '#ff3b30';
 
-            // Dynamic color-reactive UV Sun SVG
             document.getElementById('uv-icon-wrap').innerHTML = `
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${uvColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="4"/>
@@ -1584,7 +1631,6 @@
       const containerHeight = mapContainer ? mapContainer.clientHeight : 300;
 
       const verticalOffset = isHeadingUp ? -(containerHeight * 0.22) : 0;
-
       const vehicleSvg = document.getElementById('vehicle-overlay-svg');
 
       if (isHeadingUp) {
