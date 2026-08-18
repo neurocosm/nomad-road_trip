@@ -4,25 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>NOMAD: RoadTrip - Panic Disco</title>
+  <title>Panic: At The Disco</title>
 
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-touch-callout: none;
       user-select: none;
+      -webkit-touch-callout: none;
     }
 
     html, body {
       width: 100%;
       height: 100vh;
       height: 100dvh;
-      background-color: #05000a;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #05000c;
       overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #ffffff;
     }
 
     #visualizer-canvas {
@@ -32,15 +32,75 @@
       width: 100%;
       height: 100%;
       z-index: 1;
-      display: block;
     }
 
-    /* HUD Overlay Controls */
-    .hud-header {
+    .start-overlay {
       position: absolute;
-      top: max(16px, env(safe-area-inset-top));
+      top: 0;
       left: 0;
-      right: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      background: rgba(5, 0, 12, 0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s ease;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .disco-title {
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ff007f;
+      text-shadow: 0 0 15px #ff007f, 0 0 30px #00f0ff;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .disco-subtext {
+      font-size: 1.05rem;
+      color: #00f0ff;
+      font-weight: 600;
+      margin-bottom: 28px;
+      max-width: 320px;
+      line-height: 1.4;
+    }
+
+    .btn-start-mic {
+      background: #ff007f;
+      color: #ffffff;
+      font-size: 1.2rem;
+      font-weight: 800;
+      padding: 16px 36px;
+      border-radius: 40px;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.8), 0 0 40px rgba(0, 240, 255, 0.4);
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-start-mic:active {
+      transform: scale(0.94);
+      background: #d6006b;
+    }
+
+    .top-hud-bar {
+      position: absolute;
+      top: max(12px, env(safe-area-inset-top));
+      left: 0;
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -49,314 +109,284 @@
       pointer-events: none;
     }
 
-    .panic-title-wrap {
-      background: rgba(11, 0, 26, 0.85);
-      border: 2px solid #ff007f;
-      box-shadow: 0 0 14px rgba(255, 0, 127, 0.7);
-      border-radius: 12px;
+    .hud-chip {
+      background: rgba(0, 0, 0, 0.75);
+      border: 1.5px solid #00f0ff;
+      color: #00f0ff;
+      font-size: 0.9rem;
+      font-weight: 800;
       padding: 6px 14px;
-      pointer-events: auto;
-    }
-
-    .panic-title {
-      font-size: 1.15rem;
-      font-weight: 900;
-      color: #ff007f;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 8px #ff007f, 0 0 16px #00d4ff;
-    }
-
-    .btn-return {
-      background: #00d4ff;
-      color: #000000;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 24px;
-      font-size: 0.95rem;
-      font-weight: 900;
-      text-decoration: none;
+      border-radius: 20px;
       letter-spacing: 1px;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 0 16px rgba(0, 212, 255, 0.8);
-      pointer-events: auto;
-      transition: transform 0.1s ease, background 0.15s ease;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
     }
 
-    .btn-return:active {
-      transform: scale(0.92);
-      background: #ffe600;
-    }
-
-    /* Microphone Permission Prompt Overlay */
-    .mic-overlay {
+    .bottom-hud-container {
       position: absolute;
-      top: 0;
+      bottom: max(16px, env(safe-area-inset-bottom));
       left: 0;
       width: 100%;
-      height: 100%;
-      background: rgba(5, 0, 10, 0.92);
-      backdrop-filter: blur(10px);
-      z-index: 20;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 24px;
-      transition: opacity 0.3s ease;
+      z-index: 10;
+      pointer-events: auto;
     }
 
-    .mic-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .mic-box {
-      max-width: 320px;
-      background: #110022;
-      border: 2px solid #00d4ff;
-      box-shadow: 0 0 24px rgba(0, 212, 255, 0.4);
-      border-radius: 16px;
-      padding: 24px 20px;
-    }
-
-    .mic-icon {
-      font-size: 3rem;
-      margin-bottom: 12px;
-      animation: pulse 1.2s infinite alternate;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 4px #ff007f); }
-      100% { transform: scale(1.15); filter: drop-shadow(0 0 16px #00d4ff); }
-    }
-
-    .mic-btn {
-      background: #ff007f;
-      color: #ffffff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 25px;
-      font-size: 1.05rem;
-      font-weight: 800;
+    .btn-back-drive {
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid #4cd964;
+      color: #4cd964;
+      font-size: 1.15rem;
+      font-weight: 900;
+      padding: 14px 32px;
+      border-radius: 30px;
+      box-shadow: 0 0 15px rgba(76, 217, 100, 0.5), inset 0 0 10px rgba(76, 217, 100, 0.2);
       cursor: pointer;
-      box-shadow: 0 0 16px rgba(255, 0, 127, 0.8);
-      margin-top: 16px;
-      transition: transform 0.1s ease;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.15s ease, background 0.15s ease;
     }
 
-    .mic-btn:active {
-      transform: scale(0.94);
+    .btn-back-drive:active {
+      transform: scale(0.92);
+      background: rgba(76, 217, 100, 0.25);
     }
   </style>
 </head>
 <body>
 
-  <!-- Top HUD Bar -->
-  <div class="hud-header">
-    <div class="panic-title-wrap">
-      <div class="panic-title">PANIC DISCO</div>
-    </div>
-    <a href="index.html" class="btn-return">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-      DRIVE
-    </a>
-  </div>
-
-  <!-- Audio Permission Modal -->
-  <div class="mic-overlay" id="mic-overlay">
-    <div class="mic-box">
-      <div class="mic-icon">🎙️</div>
-      <h2 style="font-size: 1.35rem; color: #ffffff; margin-bottom: 8px;">Sync Car Audio</h2>
-      <p style="font-size: 0.9rem; color: #b3a5c7; line-height: 1.4;">
-        Tap below to let the disco tunnel and star-eyed emoji react to the beats in your car!
-      </p>
-      <button class="mic-btn" onclick="startAudioReactiveEngine()">ENGAGE DISCO</button>
-    </div>
-  </div>
-
   <canvas id="visualizer-canvas"></canvas>
 
+  <div class="start-overlay" id="start-overlay">
+    <div class="disco-title">PANIC MODE</div>
+    <div class="disco-subtext">Tap below to activate real-time audio reactivity.</div>
+    <button class="btn-start-mic" onclick="startAudioReactiveEngine()">ENGAGE DISCO</button>
+  </div>
+
+  <div class="top-hud-bar">
+    <div class="hud-chip">DISCO ACTIVE</div>
+    <div class="hud-chip" id="bpm-badge">SYNCING...</div>
+  </div>
+
+  <div class="bottom-hud-container">
+    <button class="btn-back-drive" onclick="returnToDashboard()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4cd964" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      BACK TO DRIVING
+    </button>
+  </div>
+
   <script>
+    let audioContext = null;
+    let analyser = null;
+    let sourceNode = null;
+    let streamReference = null;
+    let dataArray = null;
+    let bufferLength = 0;
+    let isRunning = false;
+
     const canvas = document.getElementById('visualizer-canvas');
     const ctx = canvas.getContext('2d');
 
-    let audioCtx, analyser, dataArray, bufferLength;
-    let isAudioActive = false;
-
-    // Visualizer Tunnel & Particle State
-    let tunnelOffset = 0;
+    let rotationAngle = 0;
     let particles = [];
-    const PARTICLE_COUNT = 65;
 
-    // Star-Eyed Emoji State
+    // Star-Eyed Emoji State (Independent Random Spin & Momentum)
     let emojiAngle = 0;
-    let emojiSpinSpeed = 0.025; // Base drift speed
+    let emojiSpinSpeed = 0.025;
     let emojiTargetSpinSpeed = 0.025;
     let lastFlipTime = 0;
 
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
       initParticles();
     }
 
-    window.addEventListener('resize', resizeCanvas);
-
     function initParticles() {
       particles = [];
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const numParticles = 40;
+      for (let i = 0; i < numParticles; i++) {
         particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 3 + 1,
-          color: ['#00d4ff', '#ff007f', '#ffe600', '#7b2cbf'][Math.floor(Math.random() * 4)],
-          speedY: Math.random() * 2 + 0.8,
-          speedX: (Math.random() - 0.5) * 1.5,
-          alpha: Math.random() * 0.8 + 0.2
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          size: Math.random() * 2.5 + 1,
+          speed: Math.random() * 1.5 + 0.5,
+          color: i % 2 === 0 ? '#00f0ff' : '#ff007f'
         });
       }
     }
 
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
     async function startAudioReactiveEngine() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        document.getElementById('mic-overlay').classList.add('hidden');
+        streamReference = stream;
 
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(stream);
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
 
-        analyser = audioCtx.createAnalyser();
+        analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.78;
+
         bufferLength = analyser.frequencyBinCount;
         dataArray = new Uint8Array(bufferLength);
 
-        source.connect(analyser);
-        isAudioActive = true;
+        sourceNode = audioContext.createMediaStreamSource(stream);
+        sourceNode.connect(analyser);
+
+        document.getElementById('start-overlay').classList.add('hidden');
+        isRunning = true;
+        renderVisualizer();
       } catch (err) {
-        console.warn("Microphone access declined. Using synthetic pulse fallback.", err);
-        document.getElementById('mic-overlay').classList.add('hidden');
-        isAudioActive = false;
+        console.warn("Microphone access fallback:", err);
+        document.getElementById('start-overlay').classList.add('hidden');
+        isRunning = true;
+        renderSyntheticVisualizer();
       }
     }
 
-    function renderFrame() {
-      requestAnimationFrame(renderFrame);
+    function renderVisualizer() {
+      if (!isRunning) return;
+      requestAnimationFrame(renderVisualizer);
 
-      ctx.fillStyle = 'rgba(5, 0, 10, 0.25)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      analyser.getByteFrequencyData(dataArray);
 
-      let bassEnergy = 0;
-      let midEnergy = 0;
-      let trebleEnergy = 0;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const centerX = width / 2;
+      const centerY = height / 2;
 
-      if (isAudioActive && analyser) {
-        analyser.getByteFrequencyData(dataArray);
+      // Bass Calculation (First 8 bins)
+      let bassSum = 0;
+      for (let i = 0; i < 8; i++) {
+        bassSum += dataArray[i];
+      }
+      const bassAvg = bassSum / 8;
+      const bassRatio = bassAvg / 255;
 
-        // Low-End Sub Bass (Bins 0 to 6)
-        let bassSum = 0;
-        for (let i = 0; i < 7; i++) bassSum += dataArray[i];
-        bassEnergy = (bassSum / 7) / 255;
+      // Dark fade trails
+      ctx.fillStyle = `rgba(5, 0, 12, ${0.2 + (1 - bassRatio) * 0.12})`;
+      ctx.fillRect(0, 0, width, height);
 
-        // Mids (Bins 7 to 28)
-        let midSum = 0;
-        for (let i = 7; i < 28; i++) midSum += dataArray[i];
-        midEnergy = (midSum / 21) / 255;
+      // --- 1. VERTICAL FLOATING PARTICLES ---
+      particles.forEach(p => {
+        p.y -= p.speed * (1 + bassRatio * 3.5);
+        if (p.y < 0) {
+          p.y = height;
+          p.x = Math.random() * width;
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (1 + bassRatio * 0.8), 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+      });
 
-        // Highs (Bins 29 to 64)
-        let trebleSum = 0;
-        for (let i = 29; i < 64; i++) trebleSum += dataArray[i];
-        trebleEnergy = (trebleSum / 35) / 255;
-      } else {
-        // Fallback ambient pulse if no mic
-        const time = Date.now() * 0.003;
-        bassEnergy = (Math.sin(time) + 1) * 0.25;
-        midEnergy = (Math.cos(time * 1.3) + 1) * 0.2;
-        trebleEnergy = (Math.sin(time * 2.1) + 1) * 0.15;
+      // --- 2. DUAL VERTICAL EQ TOWERS (LEFT & RIGHT) ---
+      const numBars = 24;
+      const barHeight = (height * 0.6) / numBars;
+      const barStartY = height * 0.2;
+      const maxBarWidth = width * 0.18;
+
+      for (let i = 0; i < numBars; i++) {
+        const freqVal = dataArray[Math.floor((i / numBars) * (bufferLength * 0.65))] / 255;
+        const currentBarWidth = Math.max(4, freqVal * maxBarWidth);
+        const y = barStartY + i * barHeight;
+
+        // Color Gradient: Cyan at bottom, Yellow in mid, Pink at top
+        const barColor = i < 8 ? '#00f0ff' : i < 16 ? '#ffe600' : '#ff0055';
+
+        // Left Tower
+        ctx.fillStyle = barColor;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = barColor;
+        ctx.fillRect(8, y + 2, currentBarWidth, barHeight - 4);
+
+        // Right Tower (Mirrored)
+        ctx.fillRect(width - 8 - currentBarWidth, y + 2, currentBarWidth, barHeight - 4);
       }
 
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const maxDim = Math.max(canvas.width, canvas.height);
+      // --- 3. CENTER TUNNEL & CLAMPED RADIAL BEAMS ---
+      rotationAngle += 0.008 + bassRatio * 0.02;
+      const pulseScale = 0.85 + bassRatio * 0.4;
+      const radiusBase = Math.min(width, height) * 0.22 * pulseScale;
 
-      // --- 1. RADIAL WARP DISCO RINGS ---
-      tunnelOffset += 1.5 + bassEnergy * 5.0;
-      const ringCount = 8;
-      for (let r = 0; r < ringCount; r++) {
-        const ringRadius = ((r * 70 + tunnelOffset) % (maxDim * 0.65));
-        const ringAlpha = 1 - (ringRadius / (maxDim * 0.65));
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotationAngle);
+
+      // Clamped Radial Beams (never exceed screen bounds)
+      const maxAllowedBeam = (Math.min(width, height) * 0.38);
+      const numBeams = 16;
+      for (let b = 0; b < numBeams; b++) {
+        const beamAngle = (b / numBeams) * Math.PI * 2;
+        const freqVal = dataArray[b * 3] / 255;
+        const beamLength = Math.min(maxAllowedBeam, (radiusBase * 0.6) + (maxAllowedBeam * freqVal));
+
+        const x1 = Math.cos(beamAngle) * radiusBase;
+        const y1 = Math.sin(beamAngle) * radiusBase;
+        const x2 = Math.cos(beamAngle) * (radiusBase + beamLength);
+        const y2 = Math.sin(beamAngle) * (radiusBase + beamLength);
 
         ctx.beginPath();
-        ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
-        ctx.lineWidth = 2.5 + bassEnergy * 4;
-        ctx.strokeStyle = r % 2 === 0 
-          ? `rgba(0, 212, 255, ${ringAlpha * 0.65})` 
-          : `rgba(255, 0, 127, ${ringAlpha * 0.65})`;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = b % 2 === 0 ? '#ff0055' : '#00d4ff';
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = ctx.strokeStyle;
         ctx.stroke();
       }
 
-      // --- 2. RISING DISCO PARTICLES ---
-      particles.forEach(p => {
-        p.y -= p.speedY * (1 + bassEnergy * 3.5);
-        p.x += p.speedX;
-
-        if (p.y < 0) {
-          p.y = canvas.height;
-          p.x = Math.random() * canvas.width;
-        }
-
+      // Central Waveform Rings
+      const numPoints = 48;
+      for (let ring = 1; ring <= 2; ring++) {
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius * (1 + trebleEnergy * 1.5), 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-      });
-      ctx.globalAlpha = 1.0;
+        const ringRadius = radiusBase * (ring * 0.7);
 
-      // --- 3. DUAL EQUALIZER TOWERS (LEFT & RIGHT) ---
-      const barCount = 18;
-      const barWidth = Math.max(4, Math.floor(canvas.width * 0.015));
-      const maxBarHeight = canvas.height * 0.45;
+        for (let i = 0; i < numPoints; i++) {
+          const angle = (i / numPoints) * Math.PI * 2;
+          const freqIndex = Math.floor((i / numPoints) * (bufferLength / 2));
+          const amplitude = (dataArray[freqIndex] / 255) * (25 * ring * pulseScale);
 
-      for (let i = 0; i < barCount; i++) {
-        let val = isAudioActive && dataArray ? (dataArray[i * 2] / 255) : (Math.sin(i * 0.4 + Date.now() * 0.005) + 1) * 0.4;
-        const barH = val * maxBarHeight;
-        const yPos = centerY - (barH / 2);
+          const r = ringRadius + amplitude;
+          const x = Math.cos(angle) * r;
+          const y = Math.sin(angle) * r;
 
-        // Left Tower
-        const xLeft = 14 + (i * (barWidth + 4));
-        ctx.fillStyle = i % 2 === 0 ? '#ff007f' : '#00d4ff';
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 8;
-        ctx.fillRect(xLeft, yPos, barWidth, barH);
-
-        // Right Tower
-        const xRight = canvas.width - 14 - ((barCount - i) * (barWidth + 4));
-        ctx.fillStyle = i % 2 === 0 ? '#ffe600' : '#ff007f';
-        ctx.shadowColor = '#ff007f';
-        ctx.shadowBlur = 8;
-        ctx.fillRect(xRight, yPos, barWidth, barH);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = ring === 1 ? '#ffe600' : '#ff007f';
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 14;
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.stroke();
       }
-      ctx.shadowBlur = 0;
 
-      // --- 4. GIANT STAR-EYED EMOJI REACTOR (🤩) ---
-      // Beat detection for spin direction flip
+      ctx.restore();
+
+      // --- 4. GIANT STAR-EYED EMOJI (🤩) IN CENTER OF CIRCLES ---
       const now = Date.now();
-      if ((bassEnergy > 0.72 || midEnergy > 0.65) && (now - lastFlipTime > 650)) {
-        // Randomly pick a new rotation direction with a surge of spin momentum
+      if (bassRatio > 0.68 && (now - lastFlipTime > 650)) {
         const direction = Math.random() > 0.5 ? 1 : -1;
-        const momentum = 0.07 + Math.random() * 0.09;
+        const momentum = 0.06 + Math.random() * 0.08;
         emojiTargetSpinSpeed = direction * momentum;
         lastFlipTime = now;
       }
 
-      // Smoothly interpolate angular speed and decay back toward drift
       emojiSpinSpeed += (emojiTargetSpinSpeed - emojiSpinSpeed) * 0.08;
       emojiTargetSpinSpeed *= 0.985;
       if (Math.abs(emojiTargetSpinSpeed) < 0.02) {
@@ -365,19 +395,79 @@
 
       emojiAngle += emojiSpinSpeed;
 
-      // Calculate dynamic font size and audio scale pop
-      const baseFontSize = Math.min(canvas.width, canvas.height) * 0.24;
-      const emojiScale = 1.0 + (bassEnergy * 0.75);
+      const baseFontSize = Math.min(width, height) * 0.18;
+      const emojiScale = 1.0 + (bassRatio * 0.55);
 
       ctx.save();
       ctx.translate(centerX, centerY);
       ctx.rotate(emojiAngle);
       ctx.scale(emojiScale, emojiScale);
 
-      // Layered Neon Aura Glow
-      ctx.shadowColor = bassEnergy > 0.5 ? '#ffe600' : '#ff007f';
-      ctx.shadowBlur = 20 + (bassEnergy * 45);
+      ctx.shadowColor = bassRatio > 0.55 ? '#ffe600' : '#ff007f';
+      ctx.shadowBlur = 16 + (bassRatio * 35);
 
+      ctx.font = `${baseFontSize}px sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🤩', 0, 0);
+
+      ctx.restore();
+
+      // Top HUD update
+      const badge = document.getElementById('bpm-badge');
+      if (badge && bassAvg > 140) {
+        badge.innerText = `BASS: ${Math.round(bassAvg)}`;
+        badge.style.color = '#ff007f';
+        badge.style.borderColor = '#ff007f';
+      } else if (badge) {
+        badge.innerText = `AUDIO SYNC`;
+        badge.style.color = '#00f0ff';
+        badge.style.borderColor = '#00f0ff';
+      }
+    }
+
+    function renderSyntheticVisualizer() {
+      if (!isRunning) return;
+      requestAnimationFrame(renderSyntheticVisualizer);
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      ctx.fillStyle = 'rgba(5, 0, 12, 0.2)';
+      ctx.fillRect(0, 0, width, height);
+
+      rotationAngle += 0.015;
+      const t = Date.now() * 0.004;
+      const synthBass = (Math.sin(t) + 1) / 2;
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotationAngle);
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 70 + synthBass * 50, 0, Math.PI * 2);
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 4;
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = '#ff007f';
+      ctx.stroke();
+
+      ctx.restore();
+
+      // Synthetic Emoji Fallback
+      emojiAngle += 0.03;
+      const baseFontSize = Math.min(width, height) * 0.18;
+      const emojiScale = 1.0 + (synthBass * 0.4);
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(emojiAngle);
+      ctx.scale(emojiScale, emojiScale);
+
+      ctx.shadowColor = '#ffe600';
+      ctx.shadowBlur = 18;
       ctx.font = `${baseFontSize}px sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -386,10 +476,16 @@
       ctx.restore();
     }
 
-    window.onload = () => {
-      resizeCanvas();
-      renderFrame();
-    };
+    function returnToDashboard() {
+      isRunning = false;
+      if (streamReference) {
+        streamReference.getTracks().forEach(track => track.stop());
+      }
+      if (audioContext && audioContext.state !== 'closed') {
+        audioContext.close();
+      }
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
